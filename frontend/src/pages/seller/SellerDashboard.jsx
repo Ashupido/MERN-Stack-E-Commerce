@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import API from '../services/api';
-import Spinner from '../components/common/Spinner';
+import API from '../../services/api';
+import Spinner from '../../components/common/Spinner';
 
 export default function SellerDashboard({ addToast, refreshTrigger = 0 }) { // Added refreshTrigger prop
   const [products, setProducts] = useState([]);

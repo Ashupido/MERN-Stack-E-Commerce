@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
 import productService from "../../services/productService";
@@ -6,7 +6,8 @@ import Spinner from "../../components/common/Spinner";
 import ProductForm from "../../components/admin/ProductForm";
 import DataTable from "../../components/admin/DataTable";
 import Modal from "../../components/common/Modal";
-
+import StatusBadge from "../../components/common/StatusBadge";
+import { Package, PackageCheck, PackageX, DollarSign } from 'lucide-react';
 
 export default function AdminProducts({ addToast }) {
 
@@ -23,6 +24,13 @@ export default function AdminProducts({ addToast }) {
   const [editingId, setEditingId] = useState(null);
 
   const [pendingDelete, setPendingDelete] = useState(null);
+
+  // State for filters and pagination
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterCategory, setFilterCategory] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalProductsCount, setTotalProductsCount] = useState(0);
 
   const [error, setError] = useState("");
 
@@ -45,15 +53,22 @@ export default function AdminProducts({ addToast }) {
   // GET PRODUCTS
   // ===============================
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (page = currentPage) => {
 
     try {
 
       setLoading(true);
+      setError('');
 
+      const params = {
+        page,
+        limit: 10,
+        search: searchTerm,
+        category: filterCategory,
+      };
 
       const response =
-        await productService.getProducts();
+        await productService.getProducts(params);
 
 
       console.log(
@@ -70,6 +85,9 @@ export default function AdminProducts({ addToast }) {
 
 
       setProducts(data);
+      setTotalProductsCount(response.totalProducts || 0);
+      setCurrentPage(response.currentPage || 1);
+      setTotalPages(response.totalPages || 1);
 
 
 
@@ -92,11 +110,47 @@ export default function AdminProducts({ addToast }) {
 
   useEffect(() => {
 
-    fetchProducts();
+    // When a filter or search term changes, reset to page 1
+    if (currentPage !== 1) {
+      setCurrentPage(1);
+    } else {
+      fetchProducts(1);
+    }
 
-  }, []);
+  }, [searchTerm, filterCategory]);
 
+  useEffect(() => {
+    fetchProducts(currentPage);
+  }, [currentPage]);
 
+  // ===============================
+  // DERIVED STATE & HANDLERS
+  // ===============================
+
+  const productStats = useMemo(() => {
+    const inStock = products.filter(p => p.stock > 0).length;
+    const outOfStock = products.filter(p => p.stock === 0).length;
+    const totalValue = products.reduce((sum, p) => sum + (p.price * p.stock), 0);
+
+    return {
+      total: totalProductsCount,
+      inStock,
+      outOfStock,
+      totalValue,
+    };
+  }, [products, totalProductsCount]);
+
+  const uniqueCategories = useMemo(() => {
+    if (!products) return [];
+    const categories = products.map(p => p.category).filter(Boolean);
+    return ['all', ...new Set(categories)];
+  }, [products]);
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage); // This will trigger the useEffect above
+    }
+  };
 
 
   // ===============================
@@ -150,7 +204,7 @@ export default function AdminProducts({ addToast }) {
       // IMPORTANT
       // reload from MongoDB
 
-      await fetchProducts();
+      await fetchProducts(editingId ? currentPage : 1); // Go to first page on create
 
 
 
@@ -254,7 +308,7 @@ export default function AdminProducts({ addToast }) {
       setPendingDelete(null);
 
 
-      fetchProducts();
+      await fetchProducts(currentPage); // Reload current page
 
 
 
@@ -272,8 +326,7 @@ export default function AdminProducts({ addToast }) {
 
 
 
-
-  if (loading) {
+  if (loading && products.length === 0) {
 
     return (
       <Spinner label="Loading products" />
@@ -295,25 +348,59 @@ export default function AdminProducts({ addToast }) {
         Product Management
       </h1>
 
+      {/* Statistics Cards */}
+      <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <StatCard icon={<Package className="h-6 w-6" />} title="Total Products" value={productStats.total} />
+        <StatCard icon={<PackageCheck className="h-6 w-6 text-green-400" />} title="In Stock" value={productStats.inStock} />
+        <StatCard icon={<PackageX className="h-6 w-6 text-red-400" />} title="Out of Stock" value={productStats.outOfStock} />
+        <StatCard icon={<DollarSign className="h-6 w-6 text-emerald-400" />} title="Total Stock Value" value={`$${productStats.totalValue.toFixed(2)}`} />
+      </div>
 
+      {error && (
+        <div className="mb-4 rounded-md border border-red-500/30 bg-red-950/70 p-4 text-sm font-semibold text-red-100">
+          {error}
+        </div>
+      )}
 
       <button
 
         onClick={() => {
 
           setShowForm(true);
-
           setEditingId(null);
+          setFormData(defaultFormData);
 
         }}
 
-        className="mb-6 rounded bg-cyan-500 px-5 py-3 text-black"
+        className="mb-6 rounded bg-cyan-500 px-5 py-3 font-bold text-black"
 
       >
 
         Add New Product
 
       </button>
+
+      {/* Filters and Search */}
+      <div className="mb-6 flex flex-wrap items-center justify-end gap-4">
+        <input
+          type="text"
+          placeholder="Search by name..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="rounded bg-gray-700 p-2 text-white placeholder-gray-400"
+        />
+        <select
+          value={filterCategory}
+          onChange={(e) => setFilterCategory(e.target.value)}
+          className="rounded bg-gray-700 p-2 text-white"
+        >
+          {uniqueCategories.map(category => (
+            <option key={category} value={category}>
+              {category === 'all' ? 'All Categories' : category}
+            </option>
+          ))}
+        </select>
+      </div>
 
 
 
@@ -355,6 +442,9 @@ export default function AdminProducts({ addToast }) {
 
 
 
+      {products.length === 0 && !loading ? (
+        <div className="py-10 text-center text-gray-400">No products found.</div>
+      ) : (
       <DataTable
 
 
@@ -510,6 +600,30 @@ export default function AdminProducts({ addToast }) {
 
 
       />
+      )}
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="mt-6 flex items-center justify-center gap-4">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="rounded bg-gray-700 px-4 py-2 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <span className="font-bold">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="rounded bg-gray-700 px-4 py-2 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      )}
 
 
 
@@ -552,4 +666,17 @@ export default function AdminProducts({ addToast }) {
   );
 
 
+}
+
+// Helper component for statistics cards
+function StatCard({ icon, title, value }) {
+  return (
+    <div className="rounded-lg border border-gray-800 bg-gray-900 p-6 shadow-xl">
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-bold uppercase text-gray-500">{title}</p>
+        {icon}
+      </div>
+      <p className="mt-2 text-3xl font-black text-amber-400">{value}</p>
+    </div>
+  );
 }

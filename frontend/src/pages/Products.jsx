@@ -25,14 +25,9 @@ import {
   Volleyball,
 } from 'lucide-react';
 import API from '../services/api';
-import Spinner from '../components/common/Spinner';
-
+import Spinner from '../components/common/Spinner'; 
+import { useCart } from '../context/CartContext'; // Assuming this is the correct path
 const formatPrice = (price) => Number(price || 0).toFixed(2);
-
-const getSavedCart = () => {
-  const savedCart = localStorage.getItem('cart');
-  return savedCart ? JSON.parse(savedCart) : [];
-};
 
 const getRating = (id = '') => {
   const seed = id.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
@@ -200,18 +195,18 @@ export default function Products({ addToast }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [cart, setCart] = useState(getSavedCart);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [activeMobileToggle, setActiveMobileToggle] = useState('categories');
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { addToCart } = useCart(); // Use the cart context
 
   useEffect(() => {
    const fetchProducts = async () => {
   try {
     setLoading(true);
-    const response = await API.get('/products');
+    const response = await API.get('/products?limit=1000'); // Request up to 1000 products
 
     // ✅ FIX HERE
     setProducts(response.data?.products || []);
@@ -225,7 +220,7 @@ export default function Products({ addToast }) {
 };
 
     fetchProducts();
-  }, [addToast]);
+  }, []);
 
   useEffect(() => {
     const category = searchParams.get('category')?.trim();
@@ -272,9 +267,9 @@ export default function Products({ addToast }) {
         rating: getRating(product._id || product.name),
         oldPrice: Number(product.price || 0) * (index % 2 === 0 ? 2 : 1.8),
         discount: index % 2 === 0 ? '50% off' : '55% off',
-        image: product.images?.[0]
-  ? `http://localhost:5000/uploads/${product.images[0]}`
-  : productVisuals[index % productVisuals.length]
+        image: product.images?.[0] // The path from DB already includes /uploads/
+          ? `http://localhost:5000${product.images[0]}`
+          : productVisuals[index % productVisuals.length]
       }));
   }, [catalog, searchTerm, selectedCategoryLabel]);
 
@@ -289,16 +284,7 @@ export default function Products({ addToast }) {
   };
 
   const handleAddToCart = (product) => {
-    const existingItem = cart.find((item) => item._id === product._id);
-    const updatedCart = existingItem
-      ? cart.map((item) =>
-          item._id === product._id ? { ...item, quantity: item.quantity + 1 } : item
-        )
-      : [...cart, { ...product, quantity: 1 }];
-
-    setCart(updatedCart);
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
-    window.dispatchEvent(new Event('cart-updated'));
+    addToCart(product); // Use the centralized function
     addToast?.(`${product.name} added to cart`, 'success');
   };
 

@@ -80,8 +80,8 @@ export default function ProductDetail({ addToast }) {
             <div className="bg-gradient-to-br from-gray-800 to-gray-950 p-5 sm:p-8">
               <div className="flex min-h-72 items-center justify-center rounded-lg border border-gray-700 bg-gray-950/80 p-8 sm:min-h-96">
                 <img
-                  src={product.image || fallbackProductImage}
                   alt={product.name}
+                  src={product.images?.[0] ? `http://localhost:5000${product.images[0]}` : fallbackProductImage}
                   className="h-full w-full max-w-full rounded-xl object-cover"
                 />
               </div>
