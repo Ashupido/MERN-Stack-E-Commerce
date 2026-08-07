@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import adminService from '../../services/adminService';
 import Spinner from '../../components/common/Spinner';
 import DataTable from '../../components/admin/DataTable';
@@ -19,10 +19,15 @@ export default function AdminOrders({ addToast }) {
   // Ref to skip filter effect on initial mount
   const isInitialMount = useRef(true);
 
-  const fetchOrders = async (page = currentPage) => {
+  const fetchOrders = useCallback(async (page) => {
     try {
       setLoading(true);
-      const response = await adminService.getOrders({ page, limit: 10, status: filterStatus, search: searchTerm });
+      const response = await adminService.getOrders({
+        page,
+        limit: 10,
+        status: filterStatus,
+        search: searchTerm,
+      });
       setOrders(response.orders || []);
       setCurrentPage(response.currentPage || 1);
       setTotalPages(response.totalPages || 1);
@@ -30,8 +35,8 @@ export default function AdminOrders({ addToast }) {
       addToast?.('Failed to load orders', 'error');
     } finally {
       setLoading(false);
-    }
-  };
+    } // Dependencies for useCallback
+  }, [searchTerm, filterStatus, addToast]);
 
   const fetchStats = async () => {
     try {
@@ -48,13 +53,14 @@ export default function AdminOrders({ addToast }) {
     if (isInitialMount.current) {
       isInitialMount.current = false;
     } else {
+      // This will trigger the pagination useEffect to fetch the data for page 1
       setCurrentPage(1);
     }
-  }, [searchTerm, filterStatus]); // Add searchTerm to dependencies
+  }, [searchTerm, filterStatus]);
 
   useEffect(() => {
-    fetchOrders(currentPage); // Fetch orders when currentPage changes
-  }, [currentPage]);
+    fetchOrders(currentPage);
+  }, [currentPage, fetchOrders]);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);

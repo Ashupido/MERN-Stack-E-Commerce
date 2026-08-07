@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import userService from '../../services/userService';
 import Spinner from '../../components/common/Spinner';
@@ -36,17 +36,17 @@ export default function AdminUsers({ addToast }) {
   // ===============================
   // FETCH USERS
   // ===============================
-  const fetchUsers = async (page = currentPage) => {
-    setLoading(true);
-    setError('');
+  const fetchUsers = useCallback(async (page) => {
     try {
+      setLoading(true);
+      setError('');
       const params = {
         page,
-        limit: 10, // Pagination limit for the table
+        limit: 10,
         search: searchTerm,
         role: filterRole,
         status: filterStatus,
-        sort: 'createdAt_desc', // Default sort
+        sort: 'createdAt_desc',
       };
       const response = await userService.getUsers(params);
       setUsers(response.users || []);
@@ -54,13 +54,12 @@ export default function AdminUsers({ addToast }) {
       setCurrentPage(response.currentPage || 1);
       setTotalPages(response.totalPages || 1);
     } catch (err) {
-      console.error('Failed to fetch users:', err);
       setError('Failed to load users.');
       addToast?.('Failed to load users', 'error');
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchTerm, filterRole, filterStatus, addToast]);
 
   // ===============================
   // FETCH USER STATISTICS (derived from fetchUsers for now)
@@ -86,18 +85,20 @@ export default function AdminUsers({ addToast }) {
   // EFFECTS
   // ===============================
   useEffect(() => {
-    // On filter/search change, reset to page 1. Skip initial mount.
+    // On filter/search change, reset to page 1.
+    // Skip initial mount to prevent double fetch on load.
     if (isInitialMount.current) {
       isInitialMount.current = false;
+      return; // Let the currentPage useEffect handle the initial fetch
     } else {
-      setCurrentPage(1);
+      // If filters change, always reset to page 1.
+      setCurrentPage(1); // This will trigger the other useEffect to fetch page 1
     }
   }, [searchTerm, filterRole, filterStatus]);
 
   useEffect(() => {
-    // Fetch data whenever the page changes
     fetchUsers(currentPage);
-  }, [currentPage]);
+  }, [currentPage, fetchUsers]); // fetchUsers is a dependency because it's called here
 
   // ===============================
   // HANDLERS

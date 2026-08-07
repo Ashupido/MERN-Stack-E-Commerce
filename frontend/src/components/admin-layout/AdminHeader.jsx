@@ -1,11 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { BellIcon, ArrowRightStartOnRectangleIcon as LogoutIcon } from '@heroicons/react/24/outline'; // assuming heroicons installed
+import { useAuth } from '../../context/AuthContext';
 
 // Simple placeholder avatar URL
 const avatarUrl = 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y';
 
 export default function AdminHeader({ toggleMobileSidebar, isMobileSidebarOpen }) {
+  const { user, logout } = useAuth();
+
   return (
     <header className="flex items-center justify-between h-16 bg-gray-800 px-4 shadow-md">
       {/* Mobile sidebar toggle */}
@@ -45,10 +48,10 @@ export default function AdminHeader({ toggleMobileSidebar, isMobileSidebarOpen }
         {/* Avatar and name */}
         <div className="flex items-center space-x-2">
           <img src={avatarUrl} alt="Admin avatar" className="h-8 w-8 rounded-full border border-gray-600" />
-          <span className="text-sm font-medium text-gray-200">Admin</span>
+          <span className="text-sm font-medium text-gray-200">{user?.name || 'Admin'}</span>
         </div>
         {/* Logout */}
-        <button className="flex items-center text-gray-300 hover:text-white">
+        <button onClick={logout} className="flex items-center text-gray-300 hover:text-white">
           <LogoutIcon className="h-5 w-5" />
           <span className="ml-1 text-sm">Logout</span>
         </button>

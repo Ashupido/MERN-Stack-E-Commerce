@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import authService from '../services/authService';
+import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext();
 
@@ -10,6 +11,7 @@ export const AuthProvider = ({ children }) => {
   });
   const [token, setToken] = useState(() => localStorage.getItem('token') || '');
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Restore & verify session on startup
   useEffect(() => {
@@ -36,17 +38,37 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const handleLogin = async (email, password) => {
-    const data = await authService.login(email, password);
-    if (data.token) {
-      localStorage.setItem('token', data.token);
-      setToken(data.token);
+    try {
+      const data = await authService.login(email, password);
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        setToken(data.token);
+      }
+      if (data.user) {
+        localStorage.setItem('user', JSON.stringify(data.user));
+        setUser(data.user);
+
+        // Redirect based on user role
+        switch (data.user.role) {
+          case 'admin':
+            navigate('/admin/dashboard');
+            break;
+          case 'manager':
+            navigate('/manager/dashboard');
+            break;
+          case 'seller':
+            navigate('/seller/dashboard');
+            break;
+          default:
+            navigate('/');
+            break;
+        }
+      }
+      window.dispatchEvent(new Event('auth-updated'));
+      return data;
+    } catch (err) {
+      throw err; // Re-throw error to be caught by the calling component
     }
-    if (data.user) {
-      localStorage.setItem('user', JSON.stringify(data.user));
-      setUser(data.user);
-    }
-    window.dispatchEvent(new Event('auth-updated'));
-    return data;
   };
 
   const handleRegister = async (name, email, password) => {
@@ -78,6 +100,7 @@ export const AuthProvider = ({ children }) => {
     setToken('');
     setUser(null);
     window.dispatchEvent(new Event('auth-updated'));
+    navigate('/login'); // Redirect to login page after logout
   };
 
   const value = {

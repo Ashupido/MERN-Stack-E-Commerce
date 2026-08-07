@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 import productService from "../../services/productService";
@@ -34,6 +34,9 @@ export default function AdminProducts({ addToast }) {
 
   const [error, setError] = useState("");
 
+  // Ref to skip filter effect on initial mount
+  const isInitialMount = useRef(true);
+
 
 
   const defaultFormData = {
@@ -53,75 +56,51 @@ export default function AdminProducts({ addToast }) {
   // GET PRODUCTS
   // ===============================
 
-  const fetchProducts = async (page = currentPage) => {
-
+  const fetchProducts = useCallback(async (page) => {
     try {
-
       setLoading(true);
       setError('');
-
       const params = {
         page,
         limit: 10,
         search: searchTerm,
         category: filterCategory,
       };
-
       const response =
         await productService.getProducts(params);
-
-
-      console.log(
-        "PRODUCT DATA:",
-        response
-      );
-
-
-      // support both formats
-      const data =
-        Array.isArray(response)
-          ? response
-          : response.products || [];
-
-
-      setProducts(data);
-      setTotalProductsCount(response.totalProducts || 0);
-      setCurrentPage(response.currentPage || 1);
-      setTotalPages(response.totalPages || 1);
-
-
-
+      // Ensure response is an object with a products array
+      const productsData = response?.products || [];
+      const totalProducts = response?.totalProducts || 0;
+      const currentPageData = response?.currentPage || 1;
+      const totalPagesData = response?.totalPages || 1;
+      setProducts(productsData);
+      setTotalProductsCount(totalProducts);
+      setCurrentPage(currentPageData);
+      setTotalPages(totalPagesData);
     } catch (error) {
-
       console.log(error);
-
       setError("Failed loading products");
-
     }
     finally {
-
       setLoading(false);
-
     }
-
-  };
+  }, [searchTerm, filterCategory]);
 
 
 
   useEffect(() => {
-
-    // When a filter or search term changes, reset to page 1
-    if (currentPage !== 1) {
-      setCurrentPage(1);
+    // On filter/search change, reset to page 1. Skip initial mount.
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
     } else {
-      fetchProducts(1);
+      // This will trigger the pagination useEffect to fetch the data for page 1
+      setCurrentPage(1);
     }
-
   }, [searchTerm, filterCategory]);
 
   useEffect(() => {
     fetchProducts(currentPage);
-  }, [currentPage]);
+  }, [currentPage, fetchProducts]);
 
   // ===============================
   // DERIVED STATE & HANDLERS
