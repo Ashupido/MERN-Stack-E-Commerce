@@ -64,7 +64,7 @@ export default function AdminProducts({ addToast }) {
         page,
         limit: 10,
         search: searchTerm,
-        category: filterCategory,
+        category: filterCategory === 'all' ? undefined : filterCategory,
       };
       const response =
         await productService.getProducts(params);
@@ -122,8 +122,8 @@ export default function AdminProducts({ addToast }) {
   const uniqueCategories = useMemo(() => {
     if (!products) return [];
     const categories = products.map(p => p.category).filter(Boolean);
-    return ['all', ...new Set(categories)];
-  }, [products]);
+    return ['all', ...new Set(filterCategory === 'all' ? categories : [filterCategory, ...categories])];
+  }, [products, filterCategory]);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {

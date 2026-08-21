@@ -14,14 +14,24 @@ export const CartProvider = ({ children }) => {
   const formatBackendCart = (cartData) => {
     if (!cartData || !cartData.items) return [];
     return cartData.items.map((item) => {
-      const prod = item.product || {};
+      const prod = item.product && typeof item.product === 'object' ? item.product : {};
+      const rawPrice =
+        prod.discountPrice !== undefined && prod.discountPrice !== null && prod.discountPrice > 0
+          ? prod.discountPrice
+          : (prod.price !== undefined && prod.price !== null ? prod.price : (item.price || 0));
+
+      const itemImage =
+        prod.images && prod.images.length > 0
+          ? prod.images[0]
+          : (prod.image || item.image || '');
+
       return {
         _id: prod._id || item._id,
-        productId: prod._id || item.productId,
+        productId: prod._id || item.productId || (typeof item.product === 'string' ? item.product : item._id),
         name: prod.name || item.name || 'Product',
-        price: prod.price || item.price || 0,
-        image: prod.image || item.image || '',
-        quantity: item.quantity || 1,
+        price: Number(rawPrice) || 0,
+        image: itemImage,
+        quantity: Number(item.quantity) || 1,
         stock: prod.stock !== undefined ? prod.stock : item.stock,
       };
     });
@@ -74,12 +84,21 @@ export const CartProvider = ({ children }) => {
       if (existingIndex > -1) {
         updatedCart[existingIndex].quantity += quantity;
       } else {
+        const itemPrice =
+          product.discountPrice !== undefined && product.discountPrice !== null && product.discountPrice > 0
+            ? product.discountPrice
+            : (product.price || 0);
+        const itemImage =
+          product.images && product.images.length > 0
+            ? product.images[0]
+            : (product.image || '');
+
         updatedCart.push({
           _id: productId,
           productId,
-          name: product.name,
-          price: product.price,
-          image: product.image,
+          name: product.name || 'Product',
+          price: Number(itemPrice) || 0,
+          image: itemImage,
           quantity,
           stock: product.stock,
         });

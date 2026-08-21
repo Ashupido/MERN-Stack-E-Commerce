@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { FileText, User, AlertTriangle, Info, Shield } from 'lucide-react';
+import { Activity, FileText, AlertTriangle, Info, Shield } from 'lucide-react';
 import adminService from '../../services/adminService';
 import Spinner from '../../components/common/Spinner';
 import DataTable from '../../components/admin/DataTable';
@@ -31,7 +31,7 @@ export default function AdminLogs({ addToast }) {
       setLogs(response.logs || []);
       setCurrentPage(response.currentPage || 1);
       setTotalPages(response.totalPages || 1);
-    } catch (err) {
+    } catch {
       const errorMessage = 'Failed to load activity logs.';
       setError(errorMessage);
       addToast?.(errorMessage, 'error');
@@ -79,12 +79,23 @@ export default function AdminLogs({ addToast }) {
 
   return (
     <div className="min-h-screen bg-slate-950 p-8 text-white">
-      <h1 className="mb-6 text-4xl font-bold">System Activity Logs</h1>
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-cyan-400">Audit trail</p>
+          <h1 className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">System Activity Logs</h1>
+          <p className="mt-2 text-sm text-slate-400">Review administrative events and platform activity in one place.</p>
+        </div>
+        <div className="inline-flex items-center gap-2 self-start rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-semibold text-slate-300 sm:self-auto">
+          <Activity className="h-4 w-4 text-cyan-400" /> {logs.length} events on this page
+        </div>
+      </div>
 
       {error && <div className="mb-4 rounded-md bg-red-900/50 p-4 text-center text-red-200">{error}</div>}
 
       {/* Filters */}
-      <div className="mb-6 flex flex-wrap items-center justify-end gap-4">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-800 bg-slate-900/70 p-4">
+        <p className="text-sm font-semibold text-slate-300">Filter activity</p>
+        <div className="flex flex-wrap items-center gap-4">
         <input
           type="text"
           placeholder="Search logs..."
@@ -103,6 +114,7 @@ export default function AdminLogs({ addToast }) {
           <option value="error">Error</option>
           <option value="auth">Auth</option>
         </select>
+        </div>
       </div>
 
       {logs.length === 0 && !loading ? (

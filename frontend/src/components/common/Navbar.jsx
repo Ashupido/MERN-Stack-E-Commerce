@@ -7,7 +7,7 @@ import {
   BookOpen,
   Car,
   ChevronDown,
-  Heart,
+  Ellipsis,
   Home,
   Menu,
   PackageCheck,
@@ -38,6 +38,8 @@ export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
   const { cartCount } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileActionsOpen, setMobileActionsOpen] = useState(false);
+  const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
@@ -50,7 +52,15 @@ export default function Navbar() {
   const handleLogout = () => {
     logout();
     setMobileMenuOpen(false);
+    setMobileActionsOpen(false);
+    setMobileCategoriesOpen(false);
     navigate('/login');
+  };
+
+  const handleMobileNavigate = (path) => {
+    setMobileActionsOpen(false);
+    setMobileCategoriesOpen(false);
+    navigate(path);
   };
 
   const handleUserClick = () => {
@@ -91,11 +101,11 @@ export default function Navbar() {
       </div>
 
       <div className="bg-[#061428] text-white">
-        <div className="mx-auto flex min-h-[76px] max-w-[1800px] items-center gap-4 px-4 sm:px-6 lg:px-10">
+        <div className="mx-auto flex min-h-14 max-w-[1800px] items-center gap-2 px-3 sm:min-h-[76px] sm:gap-4 sm:px-6 lg:px-10">
           <Link
             to="/products"
             onClick={() => setMobileMenuOpen(false)}
-            className="mr-2 flex shrink-0 items-center text-4xl font-black tracking-tight sm:text-5xl"
+            className="flex shrink-0 items-center text-3xl font-black tracking-tight sm:mr-2 sm:text-5xl"
           >
             P<span className="text-amber-400">i</span>do
           </Link>
@@ -199,19 +209,79 @@ export default function Navbar() {
             )}
           </div>
 
+          <div className="relative ml-auto md:hidden">
+            <button
+              type="button"
+              onClick={() => setMobileActionsOpen((open) => !open)}
+              className="flex h-10 w-10 items-center justify-center rounded-md text-white transition hover:bg-white/10"
+              aria-label="Open navigation menu"
+              aria-expanded={mobileActionsOpen}
+            >
+              <Ellipsis className="h-6 w-6" />
+            </button>
+            {mobileActionsOpen && (
+              <div className="absolute right-0 top-12 z-50 max-h-[min(70vh,30rem)] w-60 overflow-y-auto rounded-xl border border-slate-200 bg-white py-1 text-slate-900 shadow-xl">
+                {[
+                  ['Home', '/'],
+                  ['Products', '/products'],
+                  ['Cart', '/cart'],
+                ].map(([label, path]) => (
+                  <button key={path} type="button" onClick={() => handleMobileNavigate(path)} className="block w-full px-4 py-3 text-left text-sm font-semibold transition hover:bg-slate-50">
+                    {label}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setMobileCategoriesOpen((open) => !open)}
+                  className="flex w-full items-center justify-between border-t border-slate-100 px-4 py-3 text-left text-sm font-semibold transition hover:bg-slate-50"
+                  aria-expanded={mobileCategoriesOpen}
+                >
+                  Categories
+                  <ChevronDown className={`h-4 w-4 transition ${mobileCategoriesOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {mobileCategoriesOpen && (
+                  <div className="border-t border-slate-100 bg-slate-50/70 py-1">
+                    {categories.map(([Icon, label]) => (
+                      <button
+                        key={label}
+                        type="button"
+                        onClick={() => handleMobileNavigate(`/products?category=${encodeURIComponent(label)}`)}
+                        className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-medium text-slate-700 transition hover:bg-white hover:text-blue-700"
+                      >
+                        <Icon className="h-4 w-4 shrink-0" />
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileActionsOpen(false);
+                    setMobileCategoriesOpen(false);
+                    handleUserClick();
+                  }}
+                  className="block w-full border-t border-slate-100 px-4 py-3 text-left text-sm font-semibold transition hover:bg-slate-50"
+                >
+                  Profile
+                </button>
+              </div>
+            )}
+          </div>
+
           <button
             onClick={() => navigate('/cart')}
-            className="relative flex h-11 items-center gap-2 rounded-md px-2 text-sm font-bold transition hover:bg-white/10"
+            className="relative flex h-10 items-center gap-1 rounded-md px-1.5 text-sm font-bold transition hover:bg-white/10 sm:ml-auto sm:h-11 sm:gap-2 sm:px-2 lg:ml-0"
           >
-            <ShoppingCart className="h-9 w-9" />
-            <span className="absolute -top-1 left-6 flex h-6 min-w-6 items-center justify-center rounded-full bg-amber-400 px-1 text-xs font-black text-slate-950">
+            <ShoppingCart className="h-7 w-7 sm:h-9 sm:w-9" />
+            <span className="absolute -top-1 left-5 flex h-5 min-w-5 items-center justify-center rounded-full bg-amber-400 px-1 text-[10px] font-black text-slate-950 sm:left-6 sm:h-6 sm:min-w-6 sm:text-xs">
               {cartCount}
             </span>
             <span className="hidden sm:inline">Cart</span>
           </button>
         </div>
 
-        <div className="px-4 pb-4 md:hidden">
+        <div className="px-3 pb-3 md:hidden">
           <form
             onSubmit={(event) => {
               event.preventDefault();
@@ -222,16 +292,16 @@ export default function Navbar() {
               if (searchQuery.trim()) next.set('q', searchQuery.trim());
               navigate(`/products${next.toString() ? `?${next.toString()}` : ''}`);
             }}
-            className="flex overflow-hidden rounded-md bg-white"
+            className="flex w-full overflow-hidden rounded-md bg-white shadow-sm"
           >
             <input
               type="search"
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder="Search products..."
-              className="min-w-0 flex-1 px-4 py-3 text-sm font-medium text-slate-800 outline-none"
+              className="min-w-0 flex-1 px-3 py-2.5 text-sm font-medium text-slate-800 outline-none"
             />
-            <button type="submit" className="flex w-14 items-center justify-center bg-amber-400 text-slate-950">
+            <button type="submit" className="flex w-12 shrink-0 items-center justify-center bg-amber-400 text-slate-950">
               <Search className="h-5 w-5" />
             </button>
           </form>

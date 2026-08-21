@@ -3,8 +3,8 @@ import api from './api';
 const PRODUCT_BASE_URL = '/products';
 
 const productService = {
-  getProducts: async () => {
-    const response = await api.get(PRODUCT_BASE_URL);
+  getProducts: async (params = {}) => {
+    const response = await api.get(PRODUCT_BASE_URL, { params });
     return response.data;
   },
 

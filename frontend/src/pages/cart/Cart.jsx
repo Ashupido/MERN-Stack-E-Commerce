@@ -1,43 +1,30 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import orderService from '../../services/orderService.js';
-
-
-const getSavedCart = () => {
-  const savedCart = localStorage.getItem('cart');
-  return savedCart ? JSON.parse(savedCart) : [];
-};
+import { useCart } from '../../context/CartContext';
 
 export default function Cart({ addToast }) {
-  const [cart, setCart] = useState(getSavedCart);
+  const { cart, updateQuantity: updateCartQuantity, removeFromCart } = useCart();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-  const persistCart = (updatedCart) => {
-    setCart(updatedCart);
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
-    window.dispatchEvent(new Event('cart-updated'));
-  };
-
-  const updateQuantity = (productId, newQuantity) => {
-    if (!Number.isFinite(newQuantity) || newQuantity <= 0) {
-      removeItem(productId);
-      return;
+  const updateQuantity = async (productId, quantity) => {
+    try {
+      await updateCartQuantity(productId, quantity);
+    } catch {
+      // The cart context retains the error state when the update fails.
     }
-
-    persistCart(
-      cart.map((item) =>
-        item._id === productId ? { ...item, quantity: newQuantity } : item
-      )
-    );
   };
 
-  const removeItem = (productId) => {
+  const removeItem = async (productId) => {
     const item = cart.find((product) => product._id === productId);
-    persistCart(cart.filter((product) => product._id !== productId));
-    if (item) addToast?.(`${item.name} removed from cart`, 'info');
+    try {
+      await removeFromCart(productId);
+      if (item) addToast?.(`${item.name} removed from cart`, 'info');
+    } catch {
+      // The cart context retains the error state when the removal fails.
+    }
   };
 
   const calculateTotal = () => {
@@ -200,4 +187,3 @@ export default function Cart({ addToast }) {
     </div>
   );
 }
-

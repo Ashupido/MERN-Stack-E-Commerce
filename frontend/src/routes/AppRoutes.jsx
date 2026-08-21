@@ -1,4 +1,3 @@
-import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 // Layout & Common
@@ -19,6 +18,7 @@ import UserOrders from '../pages/user/Orders';
 import Cart from '../pages/cart/Cart';
 import Checkout from '../pages/cart/Checkout';
 import PaymentSuccess from '../pages/cart/PaymentSuccess';
+import Payment from '../pages/payment/Payment';
 
 // Shop Pages
 import Products from '../pages/Products';
@@ -59,6 +59,7 @@ export default function AppRoutes({ addToast }) {
         <Route path="/login" element={<Login addToast={addToast} />} />
         <Route path="/register" element={<Register addToast={addToast} />} />
         <Route path="/cart" element={<Cart addToast={addToast} />} />
+        <Route path="/payment" element={<Payment addToast={addToast} />} />
 
         {/* Authenticated User Routes (that also use the Public Layout) */}
         {/* These are protected and only accessible to the 'user' role */}

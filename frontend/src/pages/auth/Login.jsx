@@ -47,8 +47,10 @@ export default function Login({ addToast }) {
         navigate('/admin/dashboard');
       } else if (user?.role === 'seller') {
         navigate('/seller/dashboard');
-      } else {
+      } else if (user?.role === 'manager') {
         navigate('/profile');
+      } else {
+        navigate('/products');
       }
     } catch (err) {
       const message = err.response?.data?.error || err.message || 'Login failed';

@@ -5,8 +5,8 @@ const adminService = {
    * Fetches dashboard summary statistics.
    * @returns {Promise<object>} - { totalUsers, totalProducts, totalOrders, paidOrders, pendingOrders, totalRevenue }
    */
-  getDashboard: async () => {
-    const response = await api.get('/admin/dashboard/summary');
+  getDashboard: async (params = {}) => {
+    const response = await api.get('/admin/dashboard/summary', { params });
     return response.data;
   },
 

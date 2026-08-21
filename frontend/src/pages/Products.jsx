@@ -197,7 +197,7 @@ export default function Products({ addToast }) {
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [activeMobileToggle, setActiveMobileToggle] = useState('categories');
+  const activeMobileToggle = 'deals';
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const { addToCart } = useCart(); // Use the cart context
@@ -304,66 +304,66 @@ export default function Products({ addToast }) {
 
   return (
     <div className="min-h-screen bg-[#f5f7fb] text-slate-950">
-      <div className="mx-auto max-w-[1800px] px-4 py-4 sm:px-6 lg:px-10">
+      <div className="mx-auto flex max-w-[1800px] flex-col px-3 py-3 sm:px-6 sm:py-4 lg:block lg:px-10">
         {error && (
           <div className="mb-4 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800">
             {error}
           </div>
         )}
 
-        <section className="grid gap-4 xl:grid-cols-[280px_1fr_280px]">
-          <aside className="rounded-lg bg-[#071a32] p-6 text-white shadow-sm">
-            <h2 className="text-xl font-black">Deal of the Day</h2>
-            <p className="mt-4 text-sm font-bold text-amber-300">Ends in</p>
-            <div className="mt-2 grid max-w-40 grid-cols-3 overflow-hidden rounded-md bg-amber-400 text-center text-slate-950">
+        <section className="order-2 grid gap-4 xl:grid-cols-[280px_1fr_280px] lg:order-none">
+          <aside className="rounded-lg bg-[#071a32] p-4 text-white shadow-sm sm:p-6">
+            <h2 className="text-lg font-black sm:text-xl">Deal of the Day</h2>
+            <p className="mt-3 text-sm font-bold text-amber-300 sm:mt-4">Ends in</p>
+            <div className="mt-2 grid w-full max-w-48 grid-cols-3 overflow-hidden rounded-md bg-amber-400 text-center text-slate-950">
               {['08', '45', '32'].map((time, index) => (
-                <div key={time} className="px-2 py-2">
-                  <div className="text-xl font-black">{time}</div>
+                <div key={time} className="min-w-0 px-1 py-2 sm:px-2">
+                  <div className="text-lg font-black sm:text-xl">{time}</div>
                   <div className="text-[9px] font-bold uppercase">{['Hrs', 'Mins', 'Secs'][index]}</div>
                 </div>
               ))}
             </div>
-            <div className="mt-8 grid grid-cols-[86px_1fr] items-center gap-4">
-              <div className="h-24 overflow-hidden rounded-md bg-white/10">
+            <div className="mt-5 grid grid-cols-[76px_minmax(0,1fr)] items-center gap-3 sm:mt-8 sm:grid-cols-[86px_1fr] sm:gap-4">
+              <div className="h-20 overflow-hidden rounded-md bg-white/10 sm:h-24">
                 <ProductImage product={heroProduct} index={3} />
               </div>
-              <div>
-                <p className="text-sm font-bold">{heroProduct.name}</p>
+              <div className="min-w-0">
+                <p className="break-words text-sm font-bold">{heroProduct.name}</p>
                 <Rating value={getRating(heroProduct._id || heroProduct.name)} count="4.8" />
-                <p className="mt-2 text-2xl font-black">${formatPrice(heroProduct.price)}</p>
+                <p className="mt-1 text-xl font-black sm:mt-2 sm:text-2xl">${formatPrice(heroProduct.price)}</p>
                 <p className="text-xs text-slate-300 line-through">${formatPrice(Number(heroProduct.price || 0) * 2.2)}</p>
               </div>
             </div>
             <button
               onClick={() => handleAddToCart(heroProduct)}
-              className="mt-8 rounded-md bg-amber-400 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-amber-300"
+              className="mt-5 rounded-md bg-amber-400 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-amber-300 sm:mt-8"
             >
               Shop Now
             </button>
           </aside>
 
-          <section className="relative min-h-[360px] overflow-hidden rounded-lg bg-stone-100 shadow-sm">
+          <section className="relative min-h-[300px] overflow-hidden rounded-lg bg-stone-100 shadow-sm sm:min-h-[360px]">
             <img
               src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=1600&q=80"
               alt="Extra virgin olive oil bottles on a rustic table"
               className="absolute inset-0 h-full w-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/70 to-transparent" />
-            <div className="relative flex h-full max-w-xl flex-col justify-center p-8 sm:p-12">
-              <span className="w-fit rounded-md bg-green-800 px-4 py-2 text-sm font-black text-white">
+            <div className="relative flex h-full max-w-xl flex-col justify-center p-5 pb-12 sm:p-12">
+              <span className="w-fit rounded-md bg-green-800 px-3 py-1.5 text-xs font-black text-white sm:px-4 sm:py-2 sm:text-sm">
                 100% Natural
               </span>
-              <h1 className="mt-5 text-4xl font-black leading-tight text-slate-950 sm:text-5xl">
+              <h1 className="mt-3 text-3xl font-black leading-tight text-slate-950 sm:mt-5 sm:text-5xl">
                 Pure. Natural. Premium.
                 <span className="block text-green-900">Extra Virgin Olive Oil</span>
               </h1>
-              <p className="mt-5 max-w-md text-lg font-medium leading-7 text-slate-800">
+              <p className="mt-3 max-w-md text-base font-medium leading-6 text-slate-800 sm:mt-5 sm:text-lg sm:leading-7">
                 Carefully crafted for rich flavor and a healthier you.
               </p>
-              <button className="mt-6 w-fit rounded-md bg-green-800 px-6 py-3 text-sm font-black text-white transition hover:bg-green-700">
+              <button className="mt-4 w-fit rounded-md bg-green-800 px-5 py-2.5 text-sm font-black text-white transition hover:bg-green-700 sm:mt-6 sm:px-6 sm:py-3">
                 Shop Now
               </button>
-              <div className="mt-8 grid max-w-lg grid-cols-3 gap-3 text-xs font-bold text-slate-700">
+              <div className="mt-5 grid max-w-lg grid-cols-3 gap-2 text-[10px] font-bold leading-4 text-slate-700 sm:mt-8 sm:gap-3 sm:text-xs">
                 <span>Cold Pressed</span>
                 <span>Rich in Antioxidants</span>
                 <span>100% Natural</span>
@@ -401,7 +401,7 @@ export default function Products({ addToast }) {
           </aside>
         </section>
 
-        <section className="mt-4 grid gap-4 rounded-lg bg-white p-5 shadow-sm lg:grid-cols-6">
+        <section className="order-3 mt-4 grid gap-4 rounded-lg bg-white p-5 shadow-sm lg:order-none lg:grid-cols-6">
           {[
             [Truck, 'Free Delivery', 'On orders over $50'],
             [PackageCheck, 'Fast Shipping', 'Quick delivery at your door'],
@@ -420,26 +420,12 @@ export default function Products({ addToast }) {
           ))}
         </section>
 
-        <section className="mt-4 lg:hidden">
-          <div className="mb-4 flex items-center gap-2 overflow-x-auto">
-            {[
-              ['categories', 'Categories'],
-              ['deals', 'Deals'],
-              ['topSelling', 'Top Selling'],
-            ].map(([key, label]) => (
-              <button
-                key={key}
-                type="button"
-                onClick={() => setActiveMobileToggle(key)}
-                className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
-                  activeMobileToggle === key
-                    ? 'border-blue-700 bg-blue-100 text-blue-700'
-                    : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'
-                }`}
-              >
-                {label}
-              </button>
-            ))}
+        <section className="order-1 mt-4 lg:hidden">
+          <div className="mb-4">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Browse</p>
+              <h2 className="text-lg font-black text-slate-900">Products</h2>
+            </div>
           </div>
 
           {activeMobileToggle === 'categories' && (
@@ -535,7 +521,7 @@ export default function Products({ addToast }) {
           )}
         </section>
 
-        <section id="deals" className="hidden mt-4 gap-4 rounded-lg bg-white p-5 shadow-sm lg:grid xl:grid-cols-[280px_1fr_360px]">
+        <section id="deals" className="order-4 mt-4 hidden gap-4 rounded-lg bg-white p-5 shadow-sm lg:grid lg:order-none xl:grid-cols-[280px_1fr_360px]">
           <aside className="rounded-lg bg-white p-6 shadow-sm">
             <h2 className="text-lg font-black">Shop by Category</h2>
             <div className="mt-4 grid gap-3">
@@ -649,7 +635,7 @@ export default function Products({ addToast }) {
           </aside>
         </section>
 
-        <section className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <section className="order-5 mt-4 grid gap-4 md:grid-cols-2 lg:order-none xl:grid-cols-4">
           {promos.map((promo) => (
             <article key={promo.title} className={`relative min-h-36 overflow-hidden rounded-lg bg-gradient-to-r ${promo.color} p-6 shadow-sm`}>
               <img src={promo.image} alt="" className="absolute bottom-0 right-0 h-full w-1/2 object-cover mix-blend-multiply" loading="lazy" />
@@ -664,7 +650,7 @@ export default function Products({ addToast }) {
           ))}
         </section>
 
-        <section className="mt-4 grid gap-4 rounded-lg bg-white p-5 shadow-sm md:grid-cols-2 lg:grid-cols-5">
+        <section className="order-6 mt-4 grid gap-4 rounded-lg bg-white p-5 shadow-sm md:grid-cols-2 lg:order-none lg:grid-cols-5">
           {[
             [ShieldCheck, '100% Secure Checkout', 'Multiple payment options'],
             [HeartHandshake, 'Buyer Protection', 'We protect your purchase'],
