@@ -20,6 +20,7 @@ import {
   Truck,
   UserRound,
   Volleyball,
+  X,
   Zap,
 } from 'lucide-react';
 
@@ -214,16 +215,17 @@ export default function Navbar() {
               type="button"
               onClick={() => setMobileActionsOpen((open) => !open)}
               className="flex h-10 w-10 items-center justify-center rounded-md text-white transition hover:bg-white/10"
-              aria-label="Open navigation menu"
+              aria-label={mobileActionsOpen ? 'Close navigation menu' : 'Open navigation menu'}
               aria-expanded={mobileActionsOpen}
             >
-              <Ellipsis className="h-6 w-6" />
+              {mobileActionsOpen ? <X className="h-6 w-6" /> : <Ellipsis className="h-6 w-6" />}
             </button>
             {mobileActionsOpen && (
               <div className="absolute right-0 top-12 z-50 max-h-[min(70vh,30rem)] w-60 overflow-y-auto rounded-xl border border-slate-200 bg-white py-1 text-slate-900 shadow-xl">
                 {[
                   ['Home', '/'],
                   ['Products', '/products'],
+                  ['My Orders', '/orders'],
                   ['Cart', '/cart'],
                 ].map(([label, path]) => (
                   <button key={path} type="button" onClick={() => handleMobileNavigate(path)} className="block w-full px-4 py-3 text-left text-sm font-semibold transition hover:bg-slate-50">
@@ -237,7 +239,7 @@ export default function Navbar() {
                   aria-expanded={mobileCategoriesOpen}
                 >
                   Categories
-                  <ChevronDown className={`h-4 w-4 transition ${mobileCategoriesOpen ? 'rotate-180' : ''}`} />
+                  {mobileCategoriesOpen ? <X className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                 </button>
                 {mobileCategoriesOpen && (
                   <div className="border-t border-slate-100 bg-slate-50/70 py-1">
@@ -265,6 +267,15 @@ export default function Navbar() {
                 >
                   Profile
                 </button>
+                {isAuthenticated && (
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="block w-full border-t border-slate-100 px-4 py-3 text-left text-sm font-semibold text-red-600 transition hover:bg-red-50"
+                  >
+                    Logout
+                  </button>
+                )}
               </div>
             )}
           </div>

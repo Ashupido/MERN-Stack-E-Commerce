@@ -94,7 +94,7 @@ export default function ProductDetail({ addToast }) {
                   {product.name}
                 </h1>
                 <p className="mt-4 text-3xl font-black text-emerald-300">
-                  ${Number(product.price || 0).toFixed(2)}
+                  {Number(product.price || 0).toFixed(2)}
                 </p>
                 <p className="mt-4 text-base leading-7 text-gray-400">{product.description}</p>
               </div>

@@ -103,7 +103,7 @@ export default function Cart({ addToast }) {
                       </div>
                       <div>
                         <h2 className="text-lg font-black text-white">{item.name}</h2>
-                        <p className="mt-1 text-sm text-gray-400">${Number(item.price || 0).toFixed(2)} each</p>
+                        <p className="mt-1 text-sm text-gray-400">{Number(item.price || 0).toFixed(2)} each</p>
                       </div>
                     </div>
 
@@ -133,7 +133,7 @@ export default function Cart({ addToast }) {
                       </div>
 
                       <p className="text-right text-lg font-black text-emerald-300">
-                        ${(item.price * item.quantity).toFixed(2)}
+                        {(item.price * item.quantity).toFixed(2)}
                       </p>
 
                       <button
@@ -153,7 +153,7 @@ export default function Cart({ addToast }) {
               <div className="mt-5 grid gap-3 border-b border-gray-800 pb-5 text-sm">
                 <div className="flex justify-between text-gray-400">
                   <span>Subtotal</span>
-                  <span>${calculateTotal()}</span>
+                  <span>{calculateTotal()}</span>
                 </div>
                 <div className="flex justify-between text-gray-400">
                   <span>Shipping</span>
@@ -162,7 +162,7 @@ export default function Cart({ addToast }) {
               </div>
               <div className="my-5 flex items-center justify-between">
                 <span className="font-bold text-white">Total</span>
-                <span className="text-2xl font-black text-emerald-300">${calculateTotal()}</span>
+                  <span className="text-2xl font-black text-emerald-300">{calculateTotal()}</span>
               </div>
 
               <div className="grid gap-3">

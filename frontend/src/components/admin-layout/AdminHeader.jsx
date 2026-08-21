@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BellIcon, ArrowRightStartOnRectangleIcon as LogoutIcon } from '@heroicons/react/24/outline'; // assuming heroicons installed
+import { BellIcon, ArrowRightStartOnRectangleIcon as LogoutIcon, XMarkIcon } from '@heroicons/react/24/outline'; // assuming heroicons installed
 import { useAuth } from '../../context/AuthContext';
 
 // Simple placeholder avatar URL
@@ -15,11 +15,10 @@ export default function AdminHeader({ toggleMobileSidebar, isMobileSidebarOpen }
       <button
         className="lg:hidden text-gray-300 hover:text-white"
         onClick={toggleMobileSidebar}
-        aria-label="Toggle navigation"
+        aria-label={isMobileSidebarOpen ? 'Close navigation' : 'Open navigation'}
       >
-        {/* Hamburger icon */}
         <svg
-          className="h-6 w-6"
+          className={`${isMobileSidebarOpen ? 'hidden' : 'block'} h-6 w-6`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -27,6 +26,7 @@ export default function AdminHeader({ toggleMobileSidebar, isMobileSidebarOpen }
         >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
         </svg>
+        <XMarkIcon className={`${isMobileSidebarOpen ? 'block' : 'hidden'} h-6 w-6`} />
       </button>
 
       {/* Logo and title */}

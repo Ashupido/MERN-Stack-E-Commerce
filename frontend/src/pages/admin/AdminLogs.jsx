@@ -130,13 +130,13 @@ export default function AdminLogs({ addToast }) {
               { key: 'timestamp', label: 'Timestamp' },
             ]}
             data={logs.map((log) => {
-              const { Icon, color, label } = getLevelVisuals(log.level);
+              const { Icon, color, label } = getLevelVisuals(log.level || log.action);
               return {
                 level: <div className={`flex items-center gap-2 font-semibold ${color}`}><Icon className="h-4 w-4" /> {label}</div>,
                 action: <span className="font-bold text-white">{log.action}</span>,
-                details: <span className="text-sm text-slate-400">{log.details || log.target || 'N/A'}</span>,
-                user: <span className="text-sm text-slate-300">{log.user?.name || 'System'}</span>,
-                timestamp: <span className="text-sm text-slate-500">{new Date(log.timestamp).toLocaleString()}</span>,
+                details: <span className="text-sm text-slate-400">{log.details || log.activity || log.targetId || 'N/A'}</span>,
+                user: <span className="text-sm text-slate-300">{log.admin?.name || log.adminEmail || 'System'}</span>,
+                timestamp: <span className="text-sm text-slate-500">{new Date(log.createdAt).toLocaleString()}</span>,
               };
             })}
           />

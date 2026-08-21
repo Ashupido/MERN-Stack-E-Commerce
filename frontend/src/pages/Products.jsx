@@ -330,8 +330,8 @@ export default function Products({ addToast }) {
               <div className="min-w-0">
                 <p className="break-words text-sm font-bold">{heroProduct.name}</p>
                 <Rating value={getRating(heroProduct._id || heroProduct.name)} count="4.8" />
-                <p className="mt-1 text-xl font-black sm:mt-2 sm:text-2xl">${formatPrice(heroProduct.price)}</p>
-                <p className="text-xs text-slate-300 line-through">${formatPrice(Number(heroProduct.price || 0) * 2.2)}</p>
+                <p className="mt-1 text-xl font-black sm:mt-2 sm:text-2xl">{formatPrice(heroProduct.price)}</p>
+                <p className="text-xs text-slate-300 line-through">{formatPrice(Number(heroProduct.price || 0) * 2.2)}</p>
               </div>
             </div>
             <button
@@ -481,11 +481,29 @@ export default function Products({ addToast }) {
                 <div className="grid gap-4">
                   {deals.map((product) => (
                     <article key={product._id || product.name} className="rounded-xl border border-slate-200 p-4">
-                      <div className="mb-3 block aspect-square overflow-hidden rounded-lg bg-slate-50">
+                      <button
+                        type="button"
+                        onClick={() => goToProduct(product)}
+                        className="mb-3 block aspect-square w-full overflow-hidden rounded-lg bg-slate-50"
+                        aria-label={`View ${product.name} details`}
+                      >
                         <ProductImage product={product} index={0} className="h-full w-full object-cover" />
-                      </div>
-                      <h3 className="text-sm font-black text-slate-900">{product.name}</h3>
-                      <p className="mt-2 text-sm text-slate-500">${formatPrice(product.price)}</p>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => goToProduct(product)}
+                        className="text-left text-sm font-black text-slate-900"
+                      >
+                        {product.name}
+                      </button>
+                      <p className="mt-2 text-sm text-slate-500">{formatPrice(product.price)}</p>
+                      <button
+                        type="button"
+                        onClick={() => handleAddToCart(product)}
+                        className="mt-3 w-full rounded-md bg-[#061428] px-4 py-3 text-sm font-black text-white transition hover:bg-blue-800"
+                      >
+                        Add to Cart
+                      </button>
                     </article>
                   ))}
                 </div>
@@ -501,20 +519,33 @@ export default function Products({ addToast }) {
               </div>
               <div className="grid gap-4">
                 {topSelling.map((product, index) => (
-                  <button
+                  <article
                     key={product._id || product.name}
-                    onClick={() => goToProduct(product)}
-                    className="grid grid-cols-[40px_1fr] items-center gap-4 rounded-xl border border-slate-200 p-4 text-left"
+                    className="grid grid-cols-[40px_1fr] items-center gap-4 rounded-xl border border-slate-200 p-4"
                   >
-                    <div className="overflow-hidden rounded-lg bg-slate-50">
+                    <button
+                      type="button"
+                      onClick={() => goToProduct(product)}
+                      className="overflow-hidden rounded-lg bg-slate-50"
+                      aria-label={`View ${product.name} details`}
+                    >
                       <ProductImage product={product} index={index + 1} className="h-14 w-14 object-cover" />
-                    </div>
+                    </button>
                     <div>
-                      <p className="text-sm font-black text-slate-900">{product.name}</p>
-                      <p className="mt-1 text-sm font-bold text-amber-500">${formatPrice(product.price)}</p>
+                      <button type="button" onClick={() => goToProduct(product)} className="text-left text-sm font-black text-slate-900">
+                        {product.name}
+                      </button>
+                      <p className="mt-1 text-sm font-bold text-amber-500">{formatPrice(product.price)}</p>
                       <p className="text-xs text-slate-500">{product.category}</p>
+                      <button
+                        type="button"
+                        onClick={() => handleAddToCart(product)}
+                        className="mt-3 rounded-md bg-[#061428] px-4 py-2 text-xs font-black text-white transition hover:bg-blue-800"
+                      >
+                        Add to Cart
+                      </button>
                     </div>
-                  </button>
+                  </article>
                 ))}
               </div>
             </div>
@@ -588,8 +619,8 @@ export default function Products({ addToast }) {
                       <Rating value={product.rating} />
                       <h3 className="mt-2 line-clamp-1 text-sm font-black">{product.name}</h3>
                       <div className="mt-2 flex flex-wrap items-center gap-2">
-                        <span className="text-lg font-black">${formatPrice(product.price)}</span>
-                        <span className="text-xs font-bold text-slate-400 line-through">${formatPrice(product.oldPrice)}</span>
+                        <span className="text-lg font-black">{formatPrice(product.price)}</span>
+                        <span className="text-xs font-bold text-slate-400 line-through">{formatPrice(product.oldPrice)}</span>
                         <span className="text-xs font-black text-red-600">{product.discount}</span>
                       </div>
                       <button
@@ -612,24 +643,43 @@ export default function Products({ addToast }) {
             </div>
             <div className="grid gap-4">
               {topSelling.map((product, index) => (
-                <button
+                <article
                   key={product._id || product.name}
-                  onClick={() => goToProduct(product)}
-                  className="grid grid-cols-[28px_64px_1fr] items-center gap-4 text-left"
+                  className="grid grid-cols-[28px_64px_minmax(0,1fr)] items-center gap-4"
                 >
                   <span className="text-2xl font-black text-amber-500">{index + 1}</span>
-                  <span className="h-16 overflow-hidden rounded-md bg-slate-50">
+                  <button
+                    onClick={() => goToProduct(product)}
+                    className="h-16 overflow-hidden rounded-md bg-slate-50"
+                    aria-label={`View ${product.name}`}
+                  >
                     <ProductImage product={product} index={index + 1} />
-                  </span>
-                  <span>
-                    <span className="block line-clamp-1 text-sm font-semibold text-slate-600">{product.name}</span>
-                    <span className="mt-1 block font-black">${formatPrice(product.price)}</span>
-                    <span className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-amber-500">
+                  </button>
+                  <div className="min-w-0">
+                    <button onClick={() => goToProduct(product)} className="block w-full text-left">
+                      <span className="block line-clamp-1 text-sm font-semibold text-slate-600">{product.name}</span>
+                      <span className="mt-1 block font-black">{formatPrice(product.price)}</span>
+                      <span className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-amber-500">
                       <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
                       {product.rating.toFixed(1)}
-                    </span>
-                  </span>
-                </button>
+                      </span>
+                    </button>
+                    <div className="mt-2 grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => goToProduct(product)}
+                        className="rounded-md border border-slate-200 px-2 py-2 text-[11px] font-black text-blue-700"
+                      >
+                        Details
+                      </button>
+                      <button
+                        onClick={() => handleAddToCart(product)}
+                        className="rounded-md bg-[#061428] px-2 py-2 text-[11px] font-black text-white"
+                      >
+                        Add to Cart
+                      </button>
+                    </div>
+                  </div>
+                </article>
               ))}
             </div>
           </aside>

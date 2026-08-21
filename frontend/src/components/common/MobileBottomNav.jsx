@@ -1,12 +1,12 @@
-import { Home, ShoppingBag, ShoppingCart, UserRound } from 'lucide-react';
+import { ClipboardList, Home, ShoppingBag, ShoppingCart } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 
 const navItems = [
   { label: 'Home', to: '/', icon: Home, end: true },
   { label: 'Products', to: '/products', icon: ShoppingBag },
+  { label: 'Orders', to: '/orders', icon: ClipboardList },
   { label: 'Cart', to: '/cart', icon: ShoppingCart },
-  { label: 'Profile', to: '/profile', icon: UserRound },
 ];
 
 export default function MobileBottomNav() {

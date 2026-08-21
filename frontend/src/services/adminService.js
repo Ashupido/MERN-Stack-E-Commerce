@@ -20,6 +20,11 @@ const adminService = {
     return response.data;
   },
 
+  getAdminLogs: async (params = {}) => {
+    const response = await api.get('/admin/logs', { params });
+    return response.data;
+  },
+
   /**
    * Updates the status of a specific order.
    * @param {string} id - Order ID
