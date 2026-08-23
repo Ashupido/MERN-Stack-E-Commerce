@@ -1,17 +1,17 @@
 import axios from 'axios';
 
 const API = axios.create({
- // baseURL: 'http://localhost:5000/api',
-
-VITE_API_URL: import.meta.env.VITE_API_URL,
+  baseURL: import.meta.env.VITE_API_URL,
 });
 
 // Add token to requests
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
   return config;
 });
 
@@ -23,6 +23,7 @@ API.interceptors.response.use(
       localStorage.removeItem('token');
       window.location.href = '/login';
     }
+
     return Promise.reject(error);
   }
 );
