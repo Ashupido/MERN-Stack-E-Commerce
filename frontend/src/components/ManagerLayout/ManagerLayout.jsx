@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, ShoppingCart, Package, Users, LogOut } from 'lucide-react';
+import { LayoutDashboard, Menu, ShoppingCart, Package, Users, LogOut, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const SidebarLink = ({ to, icon, children }) => (
@@ -20,17 +20,30 @@ const SidebarLink = ({ to, icon, children }) => (
 export default function ManagerLayout() {
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
+  const closeMobileMenu = () => setMobileMenuOpen(false);
+
   return (
-    <div className="flex min-h-screen bg-slate-900 text-white">
-      <aside className="w-64 bg-slate-800 p-4 border-r border-slate-700 flex flex-col">
-        <h2 className="text-2xl font-bold mb-8 text-center">Manager Panel</h2>
-        <nav className="flex-grow space-y-2">
+    <div className="min-h-screen bg-slate-900 text-white lg:flex">
+      <header className="flex items-center justify-between border-b border-slate-700 bg-slate-800 px-4 py-4 lg:hidden">
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-400">Pido</p>
+          <h2 className="text-lg font-black">Manager Panel</h2>
+        </div>
+        <button type="button" onClick={() => setMobileMenuOpen((open) => !open)} className="rounded-lg p-2 text-slate-200 hover:bg-slate-700" aria-label={mobileMenuOpen ? 'Close manager menu' : 'Open manager menu'} aria-expanded={mobileMenuOpen}>
+          {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </button>
+      </header>
+      <aside className={`${mobileMenuOpen ? 'block' : 'hidden'} border-b border-slate-700 bg-slate-800 p-4 lg:block lg:w-64 lg:border-b-0 lg:border-r`}>
+        <div className="flex h-full flex-col lg:min-h-screen">
+        <h2 className="mb-8 text-center text-2xl font-bold">Manager Panel</h2>
+        <nav className="flex-grow space-y-2" onClick={closeMobileMenu}>
           <SidebarLink to="/manager/dashboard" icon={<LayoutDashboard size={20} />}>Dashboard</SidebarLink>
           <SidebarLink to="/manager/orders" icon={<ShoppingCart size={20} />}>Orders</SidebarLink>
           <SidebarLink to="/manager/products" icon={<Package size={20} />}>Products</SidebarLink>
@@ -38,12 +51,13 @@ export default function ManagerLayout() {
         </nav>
         <div>
           <button
-            onClick={handleLogout}
+            onClick={() => { closeMobileMenu(); handleLogout(); }}
             className="flex items-center w-full px-4 py-3 text-slate-300 hover:bg-red-800/50 hover:text-white transition-colors rounded-lg"
           >
             <LogOut size={20} />
             <span className="ml-3">Logout</span>
           </button>
+        </div>
         </div>
       </aside>
       <main className="flex-1 overflow-y-auto">

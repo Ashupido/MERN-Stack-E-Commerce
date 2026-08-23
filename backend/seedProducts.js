@@ -5,1011 +5,280 @@ const Product = require("./models/Product");
 
 const MONGO_URL = process.env.MONGO_URL;
 
+// =========================================================
+// PUT YOUR REAL SELLER _id HERE
+// MUST BE THE _id FROM MONGODB ATLAS
+// Example: "68a123456789012345678901"
+// =========================================================
+const SELLER_ID = "PUT_YOUR_REAL_24_CHARACTER_SELLER_ID_HERE";
+
+// =========================================================
+// PRODUCTS
+// Keep your existing 100 products array here.
+// =========================================================
+
 const products = [
   // =========================================================
-  // ELECTRONICS - 10
+  // YOUR EXISTING 100 PRODUCTS
   // =========================================================
+
+  // Electronics
   {
     name: "Wireless Bluetooth Speaker",
     price: 2500,
-    description: "Portable Bluetooth speaker with clear sound and strong battery life.",
+    description:
+      "Portable Bluetooth speaker with clear sound and strong battery life.",
     category: "Electronics",
     brand: "JBL",
     stock: 25,
     sku: "ELEC-001",
   },
+
   {
     name: "Wireless Headphones",
     price: 3200,
-    description: "Comfortable wireless headphones with noise reduction.",
+    description:
+      "Comfortable wireless headphones with noise reduction.",
     category: "Electronics",
     brand: "Sony",
     stock: 20,
     sku: "ELEC-002",
   },
-  {
-    name: "Smart LED TV 43 Inch",
-    price: 28500,
-    description: "43-inch smart LED television with high-quality display.",
-    category: "Electronics",
-    brand: "Samsung",
-    stock: 10,
-    sku: "ELEC-003",
-  },
-  {
-    name: "Smart Watch",
-    price: 4500,
-    description: "Modern smartwatch with fitness tracking and notifications.",
-    category: "Electronics",
-    brand: "Xiaomi",
-    stock: 30,
-    sku: "ELEC-004",
-  },
-  {
-    name: "Portable Power Bank",
-    price: 1800,
-    description: "High-capacity portable power bank for phones and tablets.",
-    category: "Electronics",
-    brand: "Anker",
-    stock: 35,
-    sku: "ELEC-005",
-  },
-  {
-    name: "USB Bluetooth Adapter",
-    price: 850,
-    description: "Compact USB Bluetooth adapter for computers.",
-    category: "Electronics",
-    brand: "TP-Link",
-    stock: 40,
-    sku: "ELEC-006",
-  },
-  {
-    name: "Wireless Keyboard",
-    price: 2200,
-    description: "Slim wireless keyboard for home and office use.",
-    category: "Electronics",
-    brand: "Logitech",
-    stock: 25,
-    sku: "ELEC-007",
-  },
-  {
-    name: "Wireless Mouse",
-    price: 1200,
-    description: "Ergonomic wireless mouse with smooth tracking.",
-    category: "Electronics",
-    brand: "Logitech",
-    stock: 40,
-    sku: "ELEC-008",
-  },
-  {
-    name: "USB-C Fast Charger",
-    price: 1600,
-    description: "Fast USB-C charger compatible with modern smartphones.",
-    category: "Electronics",
-    brand: "Anker",
-    stock: 50,
-    sku: "ELEC-009",
-  },
-  {
-    name: "Home WiFi Router",
-    price: 3500,
-    description: "Reliable dual-band WiFi router for home and office.",
-    category: "Electronics",
-    brand: "TP-Link",
-    stock: 20,
-    sku: "ELEC-010",
-  },
 
-  // =========================================================
-  // MOBILE PHONES - 10
-  // =========================================================
-  {
-    name: "Samsung Galaxy A15",
-    price: 18500,
-    description: "Affordable Samsung smartphone with large display and strong battery.",
-    category: "Mobile Phones",
-    brand: "Samsung",
-    stock: 15,
-    sku: "MOB-001",
-  },
-  {
-    name: "Samsung Galaxy A25",
-    price: 24500,
-    description: "Modern smartphone with excellent display and camera.",
-    category: "Mobile Phones",
-    brand: "Samsung",
-    stock: 12,
-    sku: "MOB-002",
-  },
-  {
-    name: "Samsung Galaxy A35",
-    price: 32000,
-    description: "Powerful mid-range smartphone with modern design.",
-    category: "Mobile Phones",
-    brand: "Samsung",
-    stock: 10,
-    sku: "MOB-003",
-  },
-  {
-    name: "Redmi Note 13",
-    price: 21000,
-    description: "Affordable smartphone with AMOLED display.",
-    category: "Mobile Phones",
-    brand: "Xiaomi",
-    stock: 18,
-    sku: "MOB-004",
-  },
-  {
-    name: "Redmi Note 13 Pro",
-    price: 29500,
-    description: "Performance-focused smartphone with advanced camera.",
-    category: "Mobile Phones",
-    brand: "Xiaomi",
-    stock: 12,
-    sku: "MOB-005",
-  },
-  {
-    name: "iPhone 13",
-    price: 48000,
-    description: "Premium Apple smartphone with powerful performance.",
-    category: "Mobile Phones",
-    brand: "Apple",
-    stock: 8,
-    sku: "MOB-006",
-  },
-  {
-    name: "iPhone 12",
-    price: 42000,
-    description: "Premium smartphone with excellent camera and performance.",
-    category: "Mobile Phones",
-    brand: "Apple",
-    stock: 8,
-    sku: "MOB-007",
-  },
-  {
-    name: "Tecno Spark 20",
-    price: 14500,
-    description: "Affordable smartphone with large display and battery.",
-    category: "Mobile Phones",
-    brand: "Tecno",
-    stock: 20,
-    sku: "MOB-008",
-  },
-  {
-    name: "Infinix Hot 40",
-    price: 15500,
-    description: "Budget smartphone with good performance and battery.",
-    category: "Mobile Phones",
-    brand: "Infinix",
-    stock: 20,
-    sku: "MOB-009",
-  },
-  {
-    name: "Tecno Camon 20",
-    price: 19000,
-    description: "Camera-focused smartphone with stylish design.",
-    category: "Mobile Phones",
-    brand: "Tecno",
-    stock: 15,
-    sku: "MOB-010",
-  },
-
-  // =========================================================
-  // COMPUTERS - 10
-  // =========================================================
-  {
-    name: "HP Laptop 15",
-    price: 42000,
-    description: "Reliable laptop for business, study and everyday tasks.",
-    category: "Computers",
-    brand: "HP",
-    stock: 8,
-    sku: "COMP-001",
-  },
-  {
-    name: "Dell Inspiron 15",
-    price: 45000,
-    description: "Modern laptop for work, school and entertainment.",
-    category: "Computers",
-    brand: "Dell",
-    stock: 7,
-    sku: "COMP-002",
-  },
-  {
-    name: "Lenovo IdeaPad 3",
-    price: 39500,
-    description: "Affordable laptop with balanced performance.",
-    category: "Computers",
-    brand: "Lenovo",
-    stock: 10,
-    sku: "COMP-003",
-  },
-  {
-    name: "Acer Aspire 5",
-    price: 47500,
-    description: "Powerful everyday laptop with modern hardware.",
-    category: "Computers",
-    brand: "Acer",
-    stock: 6,
-    sku: "COMP-004",
-  },
-  {
-    name: "Wireless Computer Mouse",
-    price: 1200,
-    description: "Comfortable wireless mouse for computers.",
-    category: "Computers",
-    brand: "Logitech",
-    stock: 30,
-    sku: "COMP-005",
-  },
-  {
-    name: "Mechanical Gaming Keyboard",
-    price: 4800,
-    description: "Mechanical keyboard designed for gaming and productivity.",
-    category: "Computers",
-    brand: "Redragon",
-    stock: 15,
-    sku: "COMP-006",
-  },
-  {
-    name: "27 Inch Monitor",
-    price: 22000,
-    description: "Large full HD monitor for office and entertainment.",
-    category: "Computers",
-    brand: "LG",
-    stock: 10,
-    sku: "COMP-007",
-  },
-  {
-    name: "External SSD 500GB",
-    price: 6500,
-    description: "Fast portable SSD for storing and transferring files.",
-    category: "Computers",
-    brand: "Samsung",
-    stock: 15,
-    sku: "COMP-008",
-  },
-  {
-    name: "Laptop Backpack",
-    price: 2500,
-    description: "Durable backpack designed for laptops and accessories.",
-    category: "Computers",
-    brand: "HP",
-    stock: 25,
-    sku: "COMP-009",
-  },
-  {
-    name: "USB-C Hub",
-    price: 2800,
-    description: "Multi-port USB-C hub for laptops and tablets.",
-    category: "Computers",
-    brand: "UGREEN",
-    stock: 20,
-    sku: "COMP-010",
-  },
-
-  // =========================================================
-  // FASHION - 10
-  // =========================================================
-  {
-    name: "Men's Casual Shirt",
-    price: 1800,
-    description: "Comfortable casual shirt suitable for everyday wear.",
-    category: "Fashion",
-    brand: "Pido Fashion",
-    stock: 30,
-    sku: "FASH-001",
-  },
-  {
-    name: "Men's Formal Shirt",
-    price: 2500,
-    description: "Elegant formal shirt for office and special occasions.",
-    category: "Fashion",
-    brand: "Classic Wear",
-    stock: 25,
-    sku: "FASH-002",
-  },
-  {
-    name: "Men's Jeans",
-    price: 3200,
-    description: "Modern comfortable denim jeans.",
-    category: "Fashion",
-    brand: "Denim Pro",
-    stock: 25,
-    sku: "FASH-003",
-  },
-  {
-    name: "Women's Handbag",
-    price: 2800,
-    description: "Stylish handbag suitable for everyday use.",
-    category: "Fashion",
-    brand: "Elegance",
-    stock: 20,
-    sku: "FASH-004",
-  },
-  {
-    name: "Women's Summer Dress",
-    price: 3500,
-    description: "Comfortable and stylish summer dress.",
-    category: "Fashion",
-    brand: "Pido Fashion",
-    stock: 20,
-    sku: "FASH-005",
-  },
-  {
-    name: "Men's Hoodie",
-    price: 3000,
-    description: "Warm casual hoodie for everyday use.",
-    category: "Fashion",
-    brand: "Urban Wear",
-    stock: 25,
-    sku: "FASH-006",
-  },
-  {
-    name: "Women's Jacket",
-    price: 4500,
-    description: "Modern jacket suitable for cool weather.",
-    category: "Fashion",
-    brand: "Urban Wear",
-    stock: 15,
-    sku: "FASH-007",
-  },
-  {
-    name: "Men's T-Shirt",
-    price: 1200,
-    description: "Simple comfortable cotton T-shirt.",
-    category: "Fashion",
-    brand: "Basic Wear",
-    stock: 40,
-    sku: "FASH-008",
-  },
-  {
-    name: "Women's Blouse",
-    price: 1900,
-    description: "Elegant blouse for casual and formal outfits.",
-    category: "Fashion",
-    brand: "Elegance",
-    stock: 25,
-    sku: "FASH-009",
-  },
-  {
-    name: "Sports Tracksuit",
-    price: 4200,
-    description: "Comfortable tracksuit for sports and casual wear.",
-    category: "Fashion",
-    brand: "Sport Wear",
-    stock: 20,
-    sku: "FASH-010",
-  },
-
-  // =========================================================
-  // SHOES - 10
-  // =========================================================
-  {
-    name: "Men's Running Shoes",
-    price: 3500,
-    description: "Lightweight running shoes with comfortable cushioning.",
-    category: "Shoes",
-    brand: "Nike",
-    stock: 20,
-    sku: "SHOE-001",
-  },
-  {
-    name: "Men's Casual Sneakers",
-    price: 3200,
-    description: "Modern casual sneakers for everyday use.",
-    category: "Shoes",
-    brand: "Adidas",
-    stock: 20,
-    sku: "SHOE-002",
-  },
-  {
-    name: "Women's Running Shoes",
-    price: 3600,
-    description: "Comfortable running shoes designed for active lifestyles.",
-    category: "Shoes",
-    brand: "Nike",
-    stock: 20,
-    sku: "SHOE-003",
-  },
-  {
-    name: "Women's Casual Sneakers",
-    price: 3000,
-    description: "Stylish casual sneakers for everyday wear.",
-    category: "Shoes",
-    brand: "Puma",
-    stock: 25,
-    sku: "SHOE-004",
-  },
-  {
-    name: "Men's Formal Shoes",
-    price: 4500,
-    description: "Classic formal shoes for business and special events.",
-    category: "Shoes",
-    brand: "Classic",
-    stock: 15,
-    sku: "SHOE-005",
-  },
-  {
-    name: "Women's Formal Shoes",
-    price: 4200,
-    description: "Elegant formal shoes for special occasions.",
-    category: "Shoes",
-    brand: "Elegance",
-    stock: 15,
-    sku: "SHOE-006",
-  },
-  {
-    name: "Football Shoes",
-    price: 3800,
-    description: "Durable football shoes designed for performance.",
-    category: "Shoes",
-    brand: "Adidas",
-    stock: 15,
-    sku: "SHOE-007",
-  },
-  {
-    name: "Walking Shoes",
-    price: 2800,
-    description: "Comfortable shoes for daily walking.",
-    category: "Shoes",
-    brand: "Skechers",
-    stock: 25,
-    sku: "SHOE-008",
-  },
-  {
-    name: "Kids Sneakers",
-    price: 2200,
-    description: "Comfortable sneakers for children.",
-    category: "Shoes",
-    brand: "Puma",
-    stock: 25,
-    sku: "SHOE-009",
-  },
-  {
-    name: "Hiking Shoes",
-    price: 4800,
-    description: "Durable outdoor shoes for hiking and travel.",
-    category: "Shoes",
-    brand: "Columbia",
-    stock: 12,
-    sku: "SHOE-010",
-  },
-
-  // =========================================================
-  // HOME & KITCHEN - 10
-  // =========================================================
-  {
-    name: "Electric Kettle",
-    price: 2200,
-    description: "Fast boiling electric kettle for home and office.",
-    category: "Home & Kitchen",
-    brand: "Philips",
-    stock: 25,
-    sku: "HOME-001",
-  },
-  {
-    name: "Rice Cooker",
-    price: 3800,
-    description: "Easy-to-use rice cooker for everyday cooking.",
-    category: "Home & Kitchen",
-    brand: "Panasonic",
-    stock: 15,
-    sku: "HOME-002",
-  },
-  {
-    name: "Blender",
-    price: 4200,
-    description: "Powerful kitchen blender for smoothies and food preparation.",
-    category: "Home & Kitchen",
-    brand: "Philips",
-    stock: 20,
-    sku: "HOME-003",
-  },
-  {
-    name: "Microwave Oven",
-    price: 14500,
-    description: "Compact microwave oven for quick meal preparation.",
-    category: "Home & Kitchen",
-    brand: "LG",
-    stock: 8,
-    sku: "HOME-004",
-  },
-  {
-    name: "Nonstick Cooking Pan",
-    price: 1800,
-    description: "Durable nonstick cooking pan.",
-    category: "Home & Kitchen",
-    brand: "Tefal",
-    stock: 30,
-    sku: "HOME-005",
-  },
-  {
-    name: "Kitchen Knife Set",
-    price: 1600,
-    description: "Professional kitchen knife set.",
-    category: "Home & Kitchen",
-    brand: "Kitchen Pro",
-    stock: 25,
-    sku: "HOME-006",
-  },
-  {
-    name: "Dinner Plate Set",
-    price: 2400,
-    description: "Elegant dinner plate set for home dining.",
-    category: "Home & Kitchen",
-    brand: "HomeStyle",
-    stock: 20,
-    sku: "HOME-007",
-  },
-  {
-    name: "Vacuum Cleaner",
-    price: 8500,
-    description: "Powerful vacuum cleaner for home cleaning.",
-    category: "Home & Kitchen",
-    brand: "Samsung",
-    stock: 10,
-    sku: "HOME-008",
-  },
-  {
-    name: "Electric Coffee Maker",
-    price: 5500,
-    description: "Convenient coffee maker for home and office.",
-    category: "Home & Kitchen",
-    brand: "Philips",
-    stock: 12,
-    sku: "HOME-009",
-  },
-  {
-    name: "Air Fryer",
-    price: 6500,
-    description: "Modern air fryer for healthier cooking.",
-    category: "Home & Kitchen",
-    brand: "Philips",
-    stock: 15,
-    sku: "HOME-010",
-  },
-
-  // =========================================================
-  // BEAUTY - 10
-  // =========================================================
-  {
-    name: "Face Moisturizer",
-    price: 900,
-    description: "Daily moisturizing cream for soft and hydrated skin.",
-    category: "Beauty",
-    brand: "Nivea",
-    stock: 40,
-    sku: "BEAUTY-001",
-  },
-  {
-    name: "Hair Shampoo",
-    price: 750,
-    description: "Gentle shampoo for everyday hair care.",
-    category: "Beauty",
-    brand: "Pantene",
-    stock: 45,
-    sku: "BEAUTY-002",
-  },
-  {
-    name: "Hair Conditioner",
-    price: 800,
-    description: "Conditioner for smooth and manageable hair.",
-    category: "Beauty",
-    brand: "Pantene",
-    stock: 40,
-    sku: "BEAUTY-003",
-  },
-  {
-    name: "Body Lotion",
-    price: 950,
-    description: "Moisturizing body lotion for daily use.",
-    category: "Beauty",
-    brand: "Nivea",
-    stock: 35,
-    sku: "BEAUTY-004",
-  },
-  {
-    name: "Perfume",
-    price: 2500,
-    description: "Long-lasting fragrance for everyday use.",
-    category: "Beauty",
-    brand: "Classic",
-    stock: 25,
-    sku: "BEAUTY-005",
-  },
-  {
-    name: "Lipstick",
-    price: 700,
-    description: "Long-lasting lipstick with smooth finish.",
-    category: "Beauty",
-    brand: "Maybelline",
-    stock: 30,
-    sku: "BEAUTY-006",
-  },
-  {
-    name: "Face Cleanser",
-    price: 850,
-    description: "Gentle cleanser for daily facial care.",
-    category: "Beauty",
-    brand: "Neutrogena",
-    stock: 35,
-    sku: "BEAUTY-007",
-  },
-  {
-    name: "Sunscreen",
-    price: 1200,
-    description: "Daily sunscreen for skin protection.",
-    category: "Beauty",
-    brand: "Nivea",
-    stock: 30,
-    sku: "BEAUTY-008",
-  },
-  {
-    name: "Makeup Brush Set",
-    price: 1500,
-    description: "Complete makeup brush set for everyday beauty routines.",
-    category: "Beauty",
-    brand: "Beauty Pro",
-    stock: 25,
-    sku: "BEAUTY-009",
-  },
-  {
-    name: "Hair Dryer",
-    price: 2200,
-    description: "Fast and efficient hair dryer.",
-    category: "Beauty",
-    brand: "Philips",
-    stock: 20,
-    sku: "BEAUTY-010",
-  },
-
-  // =========================================================
-  // SPORTS - 10
-  // =========================================================
-  {
-    name: "Football",
-    price: 1200,
-    description: "Durable football for training and recreational play.",
-    category: "Sports",
-    brand: "Adidas",
-    stock: 30,
-    sku: "SPORT-001",
-  },
-  {
-    name: "Basketball",
-    price: 1400,
-    description: "Quality basketball for indoor and outdoor play.",
-    category: "Sports",
-    brand: "Spalding",
-    stock: 25,
-    sku: "SPORT-002",
-  },
-  {
-    name: "Tennis Racket",
-    price: 3500,
-    description: "Lightweight tennis racket for beginners and intermediate players.",
-    category: "Sports",
-    brand: "Wilson",
-    stock: 15,
-    sku: "SPORT-003",
-  },
-  {
-    name: "Yoga Mat",
-    price: 1300,
-    description: "Comfortable non-slip yoga mat.",
-    category: "Sports",
-    brand: "Fitness Pro",
-    stock: 30,
-    sku: "SPORT-004",
-  },
-  {
-    name: "Dumbbell Set",
-    price: 4500,
-    description: "Adjustable dumbbell set for home workouts.",
-    category: "Sports",
-    brand: "Fitness Pro",
-    stock: 12,
-    sku: "SPORT-005",
-  },
-  {
-    name: "Jump Rope",
-    price: 500,
-    description: "Lightweight skipping rope for cardio training.",
-    category: "Sports",
-    brand: "Sport Pro",
-    stock: 40,
-    sku: "SPORT-006",
-  },
-  {
-    name: "Gym Gloves",
-    price: 900,
-    description: "Comfortable gloves for weight training.",
-    category: "Sports",
-    brand: "Nike",
-    stock: 25,
-    sku: "SPORT-007",
-  },
-  {
-    name: "Sports Water Bottle",
-    price: 700,
-    description: "Reusable water bottle for sports and workouts.",
-    category: "Sports",
-    brand: "Nike",
-    stock: 35,
-    sku: "SPORT-008",
-  },
-  {
-    name: "Football Jersey",
-    price: 1800,
-    description: "Comfortable football jersey for training and fans.",
-    category: "Sports",
-    brand: "Adidas",
-    stock: 25,
-    sku: "SPORT-009",
-  },
-  {
-    name: "Fitness Resistance Bands",
-    price: 1600,
-    description: "Resistance band set for home workouts.",
-    category: "Sports",
-    brand: "Fitness Pro",
-    stock: 30,
-    sku: "SPORT-010",
-  },
-
-  // =========================================================
-  // BOOKS - 10
-  // =========================================================
-  {
-    name: "JavaScript Programming Guide",
-    price: 1800,
-    description: "Practical introduction to JavaScript programming.",
-    category: "Books",
-    brand: "Tech Books",
-    stock: 20,
-    sku: "BOOK-001",
-  },
-  {
-    name: "React Development Guide",
-    price: 2200,
-    description: "Practical guide to building modern React applications.",
-    category: "Books",
-    brand: "Tech Books",
-    stock: 15,
-    sku: "BOOK-002",
-  },
-  {
-    name: "Node.js for Beginners",
-    price: 2000,
-    description: "Beginner-friendly guide to Node.js development.",
-    category: "Books",
-    brand: "Tech Books",
-    stock: 20,
-    sku: "BOOK-003",
-  },
-  {
-    name: "MongoDB Essentials",
-    price: 2300,
-    description: "Introduction to MongoDB and database development.",
-    category: "Books",
-    brand: "Tech Books",
-    stock: 15,
-    sku: "BOOK-004",
-  },
-  {
-    name: "HTML and CSS Guide",
-    price: 1500,
-    description: "Learn modern HTML and CSS from the basics.",
-    category: "Books",
-    brand: "Tech Books",
-    stock: 25,
-    sku: "BOOK-005",
-  },
-  {
-    name: "Business Management",
-    price: 1700,
-    description: "Practical principles of modern business management.",
-    category: "Books",
-    brand: "Business Press",
-    stock: 20,
-    sku: "BOOK-006",
-  },
-  {
-    name: "Digital Marketing",
-    price: 1900,
-    description: "Introduction to digital marketing strategies.",
-    category: "Books",
-    brand: "Business Press",
-    stock: 20,
-    sku: "BOOK-007",
-  },
-  {
-    name: "Entrepreneurship Basics",
-    price: 1600,
-    description: "Practical introduction to starting and managing a business.",
-    category: "Books",
-    brand: "Business Press",
-    stock: 20,
-    sku: "BOOK-008",
-  },
-  {
-    name: "English Learning Guide",
-    price: 1200,
-    description: "Practical English learning book for students.",
-    category: "Books",
-    brand: "Education Press",
-    stock: 30,
-    sku: "BOOK-009",
-  },
-  {
-    name: "Computer Science Fundamentals",
-    price: 2500,
-    description: "Introduction to important computer science concepts.",
-    category: "Books",
-    brand: "Education Press",
-    stock: 15,
-    sku: "BOOK-010",
-  },
-
-  // =========================================================
-  // ACCESSORIES - 10
-  // =========================================================
-  {
-    name: "Leather Wallet",
-    price: 1200,
-    description: "Classic leather wallet with multiple card slots.",
-    category: "Accessories",
-    brand: "Classic",
-    stock: 30,
-    sku: "ACC-001",
-  },
-  {
-    name: "Men's Wrist Watch",
-    price: 3500,
-    description: "Classic wrist watch with modern design.",
-    category: "Accessories",
-    brand: "Casio",
-    stock: 20,
-    sku: "ACC-002",
-  },
-  {
-    name: "Women's Wrist Watch",
-    price: 3200,
-    description: "Elegant wrist watch for everyday use.",
-    category: "Accessories",
-    brand: "Casio",
-    stock: 20,
-    sku: "ACC-003",
-  },
-  {
-    name: "Sunglasses",
-    price: 1500,
-    description: "Stylish sunglasses with UV protection.",
-    category: "Accessories",
-    brand: "Ray-Ban",
-    stock: 25,
-    sku: "ACC-004",
-  },
-  {
-    name: "Leather Belt",
-    price: 1400,
-    description: "Durable leather belt for everyday wear.",
-    category: "Accessories",
-    brand: "Classic",
-    stock: 30,
-    sku: "ACC-005",
-  },
-  {
-    name: "Travel Backpack",
-    price: 3200,
-    description: "Durable backpack suitable for travel and daily use.",
-    category: "Accessories",
-    brand: "Travel Pro",
-    stock: 20,
-    sku: "ACC-006",
-  },
-  {
-    name: "Phone Case",
-    price: 500,
-    description: "Protective phone case with modern design.",
-    category: "Accessories",
-    brand: "Pido Accessories",
-    stock: 50,
-    sku: "ACC-007",
-  },
-  {
-    name: "Screen Protector",
-    price: 350,
-    description: "Tempered glass screen protector for smartphones.",
-    category: "Accessories",
-    brand: "Pido Accessories",
-    stock: 50,
-    sku: "ACC-008",
-  },
-  {
-    name: "Laptop Sleeve",
-    price: 1800,
-    description: "Protective sleeve for laptops and notebooks.",
-    category: "Accessories",
-    brand: "Pido Accessories",
-    stock: 25,
-    sku: "ACC-009",
-  },
-  {
-    name: "Key Holder",
-    price: 450,
-    description: "Compact and durable key holder.",
-    category: "Accessories",
-    brand: "Classic",
-    stock: 40,
-    sku: "ACC-010",
-  },
+  // ---------------------------------------------------------
+  // KEEP THE REST OF YOUR PRODUCTS HERE
+  // ---------------------------------------------------------
 ];
 
 async function seedProducts() {
   try {
+    console.log("========================================");
+    console.log("Connecting to MongoDB...");
+    console.log("========================================");
+
+    // -------------------------------------------------------
+    // CHECK SELLER ID
+    // -------------------------------------------------------
+
+    if (!SELLER_ID || SELLER_ID === "PUT_YOUR_REAL_24_CHARACTER_SELLER_ID_HERE") {
+      throw new Error(
+        "Please put your real seller MongoDB _id in SELLER_ID."
+      );
+    }
+
+    // -------------------------------------------------------
+    // CHECK OBJECT ID FORMAT
+    // -------------------------------------------------------
+
+    if (!mongoose.Types.ObjectId.isValid(SELLER_ID)) {
+      throw new Error(
+        `Invalid SELLER_ID: ${SELLER_ID}\n` +
+        "MongoDB ObjectId must normally contain 24 hexadecimal characters."
+      );
+    }
+
+    // -------------------------------------------------------
+    // CONNECT
+    // -------------------------------------------------------
+
     await mongoose.connect(MONGO_URL);
 
     console.log("MongoDB connected");
 
-    // Remove existing products
+    console.log("========================================");
+    console.log("SELLER ID");
+    console.log("========================================");
+    console.log(SELLER_ID);
+    console.log("========================================");
+
+    // -------------------------------------------------------
+    // CONVERT STRING TO OBJECTID
+    // -------------------------------------------------------
+
+    const sellerObjectId = new mongoose.Types.ObjectId(SELLER_ID);
+
+    // -------------------------------------------------------
+    // DELETE OLD PRODUCTS
+    // -------------------------------------------------------
+
     await Product.deleteMany({});
 
     console.log("Old products removed");
 
-    // Add required fields used by the Product model
+    // -------------------------------------------------------
+    // ADD SELLER TO EVERY PRODUCT
+    // -------------------------------------------------------
+
     const productsWithDefaults = products.map((product) => ({
       ...product,
 
-      // IMPORTANT:
-      // No images are added.
+      // IMPORTANT
+      // Every product belongs to this seller.
+      seller: sellerObjectId,
+
+      // No images
       images: [],
 
-      // Default product values
-      discountPrice: undefined,
+      // Default fields
       status: "active",
       averageRating: 0,
       soldCount: 0,
       ratings: [],
+
+      // No discount
+      discountPrice: undefined,
     }));
 
-    await Product.insertMany(productsWithDefaults);
+    // -------------------------------------------------------
+    // VALIDATE PRODUCTS
+    // -------------------------------------------------------
 
-    console.log(
-      `Successfully inserted ${productsWithDefaults.length} products`
+    if (productsWithDefaults.length === 0) {
+      throw new Error("No products found in the products array.");
+    }
+
+    // -------------------------------------------------------
+    // VALIDATE PRICES
+    // -------------------------------------------------------
+
+    const invalidPrices = productsWithDefaults.filter(
+      (product) =>
+        typeof product.price !== "number" ||
+        product.price <= 0 ||
+        product.price > 50000
     );
 
-    console.log("Categories:");
+    if (invalidPrices.length > 0) {
+      console.error("Invalid products:");
 
-    const categories = [
-      "Electronics",
-      "Mobile Phones",
-      "Computers",
-      "Fashion",
-      "Shoes",
-      "Home & Kitchen",
-      "Beauty",
-      "Sports",
-      "Books",
-      "Accessories",
-    ];
+      invalidPrices.forEach((product) => {
+        console.error(
+          `${product.sku} - ${product.name} - ${product.price} ETB`
+        );
+      });
 
-    categories.forEach((category) => {
-      console.log(`✓ ${category} - 10 products`);
+      throw new Error(
+        "Some products have invalid prices. Maximum price is 50,000 ETB."
+      );
+    }
+
+    // -------------------------------------------------------
+    // VALIDATE SELLER FIELD
+    // -------------------------------------------------------
+
+    const productsWithoutSeller = productsWithDefaults.filter(
+      (product) => !product.seller
+    );
+
+    if (productsWithoutSeller.length > 0) {
+      throw new Error(
+        `${productsWithoutSeller.length} products do not have a seller.`
+      );
+    }
+
+    // -------------------------------------------------------
+    // INSERT
+    // -------------------------------------------------------
+
+    console.log("Inserting products...");
+
+    const insertedProducts = await Product.insertMany(
+      productsWithDefaults
+    );
+
+    // -------------------------------------------------------
+    // RESULTS
+    // -------------------------------------------------------
+
+    console.log("========================================");
+    console.log("SEED COMPLETED SUCCESSFULLY");
+    console.log("========================================");
+
+    console.log(
+      `Products inserted: ${insertedProducts.length}`
+    );
+
+    console.log(
+      `Seller ID: ${SELLER_ID}`
+    );
+
+    console.log("Images: None");
+
+    console.log("Maximum price: 50,000 ETB");
+
+    // -------------------------------------------------------
+    // CATEGORY SUMMARY
+    // -------------------------------------------------------
+
+    const categoryCounts = {};
+
+    insertedProducts.forEach((product) => {
+      if (!categoryCounts[product.category]) {
+        categoryCounts[product.category] = 0;
+      }
+
+      categoryCounts[product.category]++;
     });
 
-    console.log("Maximum product price: 48,000 ETB");
-    console.log("Images: none");
+    console.log("========================================");
+    console.log("CATEGORY SUMMARY");
+    console.log("========================================");
+
+    Object.entries(categoryCounts).forEach(
+      ([category, count]) => {
+        console.log(`${category}: ${count}`);
+      }
+    );
+
+    console.log("========================================");
+
+    // -------------------------------------------------------
+    // PRICE SUMMARY
+    // -------------------------------------------------------
+
+    const prices = insertedProducts.map(
+      (product) => product.price
+    );
+
+    const maximumPrice = Math.max(...prices);
+    const minimumPrice = Math.min(...prices);
+
+    console.log(
+      "Minimum price:",
+      minimumPrice.toLocaleString(),
+      "ETB"
+    );
+
+    console.log(
+      "Maximum price:",
+      maximumPrice.toLocaleString(),
+      "ETB"
+    );
+
+    // -------------------------------------------------------
+    // DISCONNECT
+    // -------------------------------------------------------
 
     await mongoose.disconnect();
 
-    console.log("MongoDB disconnected");
+    console.log("MongoDB connection closed");
+    console.log("========================================");
+
     process.exit(0);
   } catch (error) {
-    console.error("SEED ERROR:", error);
+    console.error("========================================");
+    console.error("SEED ERROR:");
+    console.error(error.message);
+    console.error("========================================");
 
-    await mongoose.disconnect();
+    try {
+      await mongoose.disconnect();
+    } catch (disconnectError) {
+      console.error(
+        "Disconnect error:",
+        disconnectError.message
+      );
+    }
 
     process.exit(1);
   }
