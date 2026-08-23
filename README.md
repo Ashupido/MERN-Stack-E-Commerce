@@ -1,586 +1,207 @@
-# Pido Ecommerce Platform
+# Pido Ecommerce
 
-A full-stack MERN ecommerce platform built with **React, Node.js, Express.js, and MongoDB**.
-The platform provides a complete online shopping experience with customer features, secure authentication, product management, order processing, and Chapa payment integration.
+Pido is a full-stack MERN ecommerce application with customer shopping, cart and checkout flows, Chapa payments, wishlists, product reviews, and separate Admin, Manager, and Seller areas.
 
----
+## Stack
 
-# 🚀 Project Overview
+- Frontend: React 19, Vite, React Router, Tailwind CSS, Axios, Lucide React
+- Backend: Node.js, Express, MongoDB, Mongoose, JWT, bcryptjs
+- Services: Cloudinary for product images and Chapa for payments
 
-Pido Ecommerce is a scalable ecommerce application designed for online product selling.
+## Features
 
-The system supports:
+### Customers
 
-* Customer shopping experience
-* Secure user authentication
-* Product management
-* Shopping cart
-* Order management
-* Online payment verification
-* Admin dashboard
-* Inventory management
+- Register and sign in with JWT authentication
+- Browse, search, filter, and view products
+- Add products to a cart and check out
+- Pay through Chapa and view order history
+- Add and remove wishlist products
+- Update profile information and password
+- Switch between ETB and USD in product details and wishlist
+- Responsive desktop, tablet, and mobile navigation
 
-The project follows a professional full-stack architecture separating:
+### Staff
 
-```
-Frontend
-    |
-    |
-REST API
-    |
-    |
-Backend
-    |
-    |
-MongoDB Database
-```
+- Admin dashboard, product management, order management, user management, reports, and logs
+- Manager dashboard with protected manager routes
+- Seller dashboard and product management
+- Role-based route protection for Admin, Manager, Seller, and Customer accounts
 
----
+## Project Structure
 
-# ✨ Features
-
-## 👤 Customer Features
-
-### Authentication
-
-* User registration
-* User login
-* JWT authentication
-* Protected user routes
-* User profile management
-
-### Product Shopping
-
-* Browse products
-* Product details page
-* Product search
-* Category filtering
-* Product sorting
-* Product pagination
-* Product image display
-
-### Shopping Cart
-
-* Add products to cart
-* Update quantity
-* Remove products
-* Stock validation
-* Cart persistence
-
-### Checkout & Orders
-
-* Create orders
-* View order history
-* Order status tracking
-* Payment status tracking
-
-### Payment
-
-* Chapa payment gateway integration
-* Transaction verification
-* Payment callback handling
-* Automatic order confirmation
-* Cart clearing after successful payment
-
----
-
-# 👨‍💼 Admin Features
-
-## Admin Dashboard
-
-Admin has a separate dashboard with management tools.
-
-Features:
-
-* Dashboard statistics
-* Total users
-* Total products
-* Total orders
-* Revenue tracking
-
-## Product Management
-
-Admin can:
-
-* Create products
-* Update products
-* Delete products
-* Upload product images
-* Manage stock
-* Manage categories
-* Manage pricing
-
-## Inventory Management
-
-* Stock monitoring
-* Low stock detection
-* Out of stock products
-* Inventory value calculation
-
-## Order Management
-
-Admin can:
-
-* View customer orders
-* Update order status
-* Confirm payments
-* Track order progress
-
-## User Management
-
-Admin can:
-
-* View users
-* Manage user roles
-* Control access permissions
-
----
-
-# 🛠 Technology Stack
-
-## Frontend
-
-| Technology   | Purpose                 |
-| ------------ | ----------------------- |
-| React        | User interface          |
-| Vite         | Development environment |
-| Tailwind CSS | Styling                 |
-| Axios        | API communication       |
-| React Router | Navigation              |
-| Context API  | State management        |
-
----
-
-## Backend
-
-| Technology | Purpose            |
-| ---------- | ------------------ |
-| Node.js    | Runtime            |
-| Express.js | API framework      |
-| MongoDB    | Database           |
-| Mongoose   | Database modeling  |
-| JWT        | Authentication     |
-| bcryptjs   | Password security  |
-| Multer     | Image upload       |
-| Chapa API  | Payment processing |
-
----
-
-# 📂 Project Structure
-
-```
-Pido-Ecommerce
-
-│
-├── frontend
-│
-│   ├── src
-│   │
-│   ├── components
-│   │   ├── common
-│   │   ├── admin
-│   │   └── products
-│   │
-│   ├── pages
-│   │   ├── admin
-│   │   ├── user
-│   │   └── products
-│   │
-│   ├── services
-│   │   ├── api.js
-│   │   ├── authService.js
-│   │   ├── productService.js
-│   │   └── paymentService.js
-│   │
-│   └── App.jsx
-│
-│
-├── backend
-│
-│   ├── config
-│   │
-│   ├── controllers
-│   │
-│   ├── models
-│   │
-│   ├── routes
-│   │
-│   ├── middleware
-│   │
-│   ├── services
-│   │
-│   ├── uploads
-│   │
-│   └── server.js
-│
-│
-├── docs
-│
-├── .gitignore
-│
+```text
+.
+├── backend/
+│   ├── middleware/
+│   ├── models/
+│   ├── routes/
+│   ├── seedProducts.js
+│   ├── server.js
+│   └── package.json
+├── frontend/
+│   ├── public/_redirects
+│   ├── src/components/
+│   ├── src/context/
+│   ├── src/pages/
+│   ├── src/routes/
+│   ├── src/services/
+│   ├── src/utils/
+│   └── package.json
 └── README.md
 ```
 
----
+## Local Setup
 
-# ⚙️ Installation Guide
-
-## 1. Clone Repository
-
-```bash
-git clone https://github.com/Ashupido/pido-Ecommerce.git
-```
-
-Move into project:
-
-```bash
-cd pido-Ecommerce
-```
-
----
-
-# Backend Setup
-
-Go to backend:
+### Backend
 
 ```bash
 cd backend
-```
-
-Install packages:
-
-```bash
 npm install
-```
-
-Create `.env` file:
-
-```env
-PORT=5000
-
-MONGO_URL=mongodb://127.0.0.1:27017/pido_ecommerce
-
-JWT_SECRET=your_secret_key
-
-CHAPA_SECRET_KEY=your_chapa_secret
-```
-
-Start backend:
-
-Development:
-
-```bash
 npm run dev
 ```
 
-Production:
+The backend runs on `http://localhost:5000` unless `PORT` is configured.
 
-```bash
-npm start
+Create `backend/.env` with:
+
+```env
+PORT=5000
+MONGO_URL=mongodb://127.0.0.1:27017/pido_ecommerce
+JWT_SECRET=replace_with_a_long_random_secret
+CHAPA_SECRET_KEY=replace_with_your_chapa_secret
+CHAPA_WEBHOOK_SECRET_HASH=replace_with_your_webhook_secret
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+FRONTEND_URL=http://localhost:5173
+BACKEND_URL=http://localhost:5000
 ```
 
-Backend runs:
+### Frontend
 
-```
-http://localhost:5000
-```
-
----
-
-# Frontend Setup
-
-Go to frontend:
+In a second terminal:
 
 ```bash
 cd frontend
-```
-
-Install packages:
-
-```bash
 npm install
+npm run dev
 ```
 
-Create `.env`:
+The frontend runs at `http://localhost:5173`.
+
+Create `frontend/.env` with:
 
 ```env
 VITE_API_URL=http://localhost:5000/api
 ```
 
-Start frontend:
+## Production Configuration
+
+The deployed frontend uses:
+
+```env
+VITE_API_URL=https://pido-backend.onrender.com/api
+```
+
+Configure these variables on the backend hosting service:
+
+```env
+MONGO_URL=your_mongodb_atlas_connection
+JWT_SECRET=your_jwt_secret
+CHAPA_SECRET_KEY=your_chapa_secret
+CHAPA_WEBHOOK_SECRET_HASH=your_webhook_secret
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+FRONTEND_URL=https://pido-ecommerce.netlify.app
+BACKEND_URL=https://pido-backend.onrender.com
+```
+
+Live application: <https://pido-ecommerce.netlify.app>
+
+Backend health check: <https://pido-backend.onrender.com/api/health>
+
+## Product Images
+
+Product images are uploaded directly to Cloudinary through the backend. MongoDB stores the resulting Cloudinary HTTPS URL in the product `images` array. The application does not rely on the backend local filesystem for permanent product images.
+
+Required upload field: `image`.
+
+## Currency
+
+ETB is the default customer-facing currency. USD conversion uses:
+
+```text
+1 USD = 161.92 ETB
+USD amount = ETB amount / 161.92
+```
+
+The currency selector affects product detail and wishlist prices. Main product listings, cart, orders, and admin reports retain their base ETB display.
+
+## Important Routes
+
+Customer routes:
+
+```text
+/              Product listing
+/products      Product listing
+/product/:id   Product details
+/cart          Cart
+/checkout      Checkout
+/wishlist      Protected wishlist
+/orders        Protected order history
+/profile       Protected profile
+/login         Login
+/register      Registration
+```
+
+Staff route areas:
+
+```text
+/admin/*
+/manager/*
+/seller/*
+```
+
+## API Areas
+
+- `/api/auth` for registration and login
+- `/api/products` for product browsing and management
+- `/api/cart` for cart operations
+- `/api/orders` for orders and checkout
+- `/api/wishlist` for authenticated wishlist operations
+- `/api/payment` for Chapa payment flows
+- `/api/admin` for admin operations
+- `/api/manager` and `/api/seller` for role-specific operations
+
+## SPA Deployment
+
+Netlify needs the file `frontend/public/_redirects` containing:
+
+```text
+/*    /index.html   200
+```
+
+This allows direct navigation and refreshes on React Router routes such as `/wishlist` and `/product/:id`.
+
+## Validation
+
+Build the frontend before deployment:
 
 ```bash
-npm run dev
+cd frontend
+npm run build
 ```
 
-Frontend runs:
+Run the frontend lint check with:
 
-```
-http://localhost:5173
-```
-
----
-
-# 🔐 Authentication Flow
-
-User registration:
-
-```
-Frontend
-   |
-POST /api/auth/register
-   |
-Backend
-   |
-MongoDB
+```bash
+npm run lint
 ```
 
-Login:
-
-```
-User Login
-
-      |
-      v
-
-JWT Token Generated
-
-      |
-      v
-
-Stored in Browser
-
-      |
-      v
-
-Protected API Requests
-```
-
----
-
-# 📡 API Documentation
-
-## Authentication
-
-Register:
-
-```
-POST /api/auth/register
-```
-
-Login:
-
-```
-POST /api/auth/login
-```
-
----
-
-# Products
-
-Get products:
-
-```
-GET /api/products
-```
-
-Create product:
-
-```
-POST /api/products
-```
-
-Admin only
-
-Update product:
-
-```
-PUT /api/products/:id
-```
-
-Delete product:
-
-```
-DELETE /api/products/:id
-```
-
----
-
-# Cart
-
-Add cart item:
-
-```
-POST /api/cart/add
-```
-
-Get cart:
-
-```
-GET /api/cart
-```
-
-Remove item:
-
-```
-DELETE /api/cart/:id
-```
-
----
-
-# Orders
-
-Create order:
-
-```
-POST /api/orders
-```
-
-Get orders:
-
-```
-GET /api/orders
-```
-
-Update order:
-
-```
-PUT /api/orders/:id
-```
-
----
-
-# Payments
-
-Initialize Chapa payment:
-
-```
-POST /api/payment/initialize
-```
-
-Verify payment:
-
-```
-GET /api/payment/verify/:tx_ref
-```
-
----
-
-# 🖼 Image Upload System
-
-Product images are uploaded using Multer.
-
-Flow:
-
-```
-Admin Upload Image
-
-        |
-
-Multer
-
-        |
-
-backend/uploads
-
-        |
-
-MongoDB stores:
-
-/uploads/product-image.jpg
-
-        |
-
-Frontend displays:
-
-http://localhost:5000/uploads/product-image.jpg
-```
-
----
-
-# 🔒 Security Features
-
-Implemented:
-
-* JWT authentication
-* Password hashing
-* Protected routes
-* Admin role authorization
-* Token validation
-* Stock validation
-* Payment verification
-
----
-
-# 📦 Database Collections
-
-MongoDB collections:
-
-```
-users
-
-products
-
-orders
-
-carts
-
-payments
-```
-
----
-
-# 🚀 Future Improvements
-
-Planned features:
-
-* Seller dashboard
-* Product reviews
-* Wishlist
-* Email notifications
-* Cloudinary image storage
-* Advanced analytics
-* Mobile application
-* Multi-vendor marketplace
-
----
-
-# Deployment
-
-Recommended:
-
-Frontend:
-
-* Vercel
-* Netlify
-
-Backend:
-
-* Render
-* Railway
-
-Database:
-
-* MongoDB Atlas
-
----
-
-# Developer
-
-**Ashenafi Sentayehu**
-
-Full Stack Web Developer
-
-Skills:
-
-* React
-* Node.js
-* Express
-* MongoDB
-* Full Stack Development
-
----
-
-# License
-
-This project is developed for learning and commercial improvement purposes.
+## Security Notes
+
+- Never commit `.env` files or production secrets.
+- Passwords created through registration and the Admin user-management flow are bcrypt-hashed.
+- Existing users created before password hashing was corrected must be assigned a new password by an administrator.
