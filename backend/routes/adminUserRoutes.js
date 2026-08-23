@@ -85,8 +85,13 @@ router.get("/:id", verifyToken, isAdmin, async (req, res) => {
 router.post("/", verifyToken, isAdmin, async (req, res) => {
   try {
     const { name, email, password, role, status, phone, username } = req.body;
+    const normalizedEmail = email?.trim().toLowerCase();
 
-    const existingUser = await User.findOne({ email });
+    if (!name?.trim() || !normalizedEmail || !password) {
+      return res.status(400).json({ message: "Name, email, and password are required" });
+    }
+
+    const existingUser = await User.findOne({ email: normalizedEmail });
     if (existingUser) {
       return res.status(400).json({ message: "User with this email already exists" });
     }
@@ -95,7 +100,7 @@ router.post("/", verifyToken, isAdmin, async (req, res) => {
 
     const newUser = new User({
       name,
-      email,
+      email: normalizedEmail,
       password: hashedPassword,
       username, // Optional
       phone,

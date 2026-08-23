@@ -27,7 +27,6 @@ import {
 import API from '../../services/api';
 import Spinner from '../../components/common/Spinner';
 import { useCart } from '../../context/CartContext';
-import { useCurrency } from '../../context/CurrencyContext';
 const formatPrice = (price) => Number(price || 0).toFixed(2);
 
 const getRating = (id = '') => {
@@ -204,7 +203,6 @@ export default function Products({ addToast }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
-  const { formatCurrency } = useCurrency();
 
   useEffect(() => {
    const fetchProducts = async () => {
@@ -332,8 +330,8 @@ export default function Products({ addToast }) {
               <div>
                 <p className="text-sm font-bold">{heroProduct.name}</p>
                 <Rating value={getRating(heroProduct._id || heroProduct.name)} count="4.8" />
-                <p className="mt-2 text-2xl font-black">{formatCurrency(heroProduct.price)}</p>
-                <p className="text-xs text-slate-300 line-through">{formatCurrency(Number(heroProduct.price || 0) * 2.2)}</p>
+                <p className="mt-2 text-2xl font-black">{formatPrice(heroProduct.price)}</p>
+                <p className="text-xs text-slate-300 line-through">{formatPrice(Number(heroProduct.price || 0) * 2.2)}</p>
               </div>
             </div>
             <button
@@ -501,7 +499,7 @@ export default function Products({ addToast }) {
                         <ProductImage product={product} index={0} className="h-full w-full object-cover" />
                       </div>
                       <h3 className="text-sm font-black text-slate-900">{product.name}</h3>
-                      <p className="mt-2 text-sm text-slate-500">{formatCurrency(product.price)}</p>
+                      <p className="mt-2 text-sm text-slate-500">{formatPrice(product.price)}</p>
                     </article>
                   ))}
                 </div>
@@ -527,7 +525,7 @@ export default function Products({ addToast }) {
                     </div>
                     <div>
                       <p className="text-sm font-black text-slate-900">{product.name}</p>
-                      <p className="mt-1 text-sm font-bold text-amber-500">{formatCurrency(product.price)}</p>
+                      <p className="mt-1 text-sm font-bold text-amber-500">{formatPrice(product.price)}</p>
                       <p className="text-xs text-slate-500">{product.category}</p>
                     </div>
                   </button>
@@ -604,8 +602,8 @@ export default function Products({ addToast }) {
                       <Rating value={product.rating} />
                       <h3 className="mt-2 line-clamp-1 text-sm font-black">{product.name}</h3>
                       <div className="mt-2 flex flex-wrap items-center gap-2">
-                        <span className="text-lg font-black">{formatCurrency(product.price)}</span>
-                        <span className="text-xs font-bold text-slate-400 line-through">{formatCurrency(product.oldPrice)}</span>
+                        <span className="text-lg font-black">{formatPrice(product.price)}</span>
+                        <span className="text-xs font-bold text-slate-400 line-through">{formatPrice(product.oldPrice)}</span>
                         <span className="text-xs font-black text-red-600">{product.discount}</span>
                       </div>
                       <button
@@ -639,7 +637,7 @@ export default function Products({ addToast }) {
                   </span>
                   <span>
                     <span className="block line-clamp-1 text-sm font-semibold text-slate-600">{product.name}</span>
-                    <span className="mt-1 block font-black">{formatCurrency(product.price)}</span>
+                    <span className="mt-1 block font-black">{formatPrice(product.price)}</span>
                     <span className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-amber-500">
                       <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
                       {product.rating.toFixed(1)}

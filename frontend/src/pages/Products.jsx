@@ -28,7 +28,6 @@ import {
 import API from '../services/api';
 import Spinner from '../components/common/Spinner'; 
 import { useCart } from '../context/CartContext';
-import { useCurrency } from '../context/CurrencyContext';
 import { normalizeProductImageUrl } from '../utils/helpers';
 const formatPrice = (price) => Number(price || 0).toFixed(2);
 
@@ -246,7 +245,6 @@ export default function Products({ addToast }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
-  const { formatCurrency } = useCurrency();
 
   useEffect(() => {
    const fetchProducts = async () => {
