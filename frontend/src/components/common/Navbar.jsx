@@ -10,6 +10,7 @@ import {
   ChevronDown,
   Ellipsis,
   Home,
+  LogIn,
   Menu,
   PackageCheck,
   RotateCcw,
@@ -19,6 +20,7 @@ import {
   Sparkles,
   Store,
   Truck,
+  UserPlus,
   UserRound,
   Volleyball,
   X,
@@ -290,17 +292,38 @@ export default function Navbar() {
                     ))}
                   </div>
                 )}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMobileActionsOpen(false);
-                    setMobileCategoriesOpen(false);
-                    handleUserClick();
-                  }}
-                  className="block w-full border-t border-slate-100 px-4 py-3 text-left text-sm font-semibold transition hover:bg-slate-50"
-                >
-                  Profile
-                </button>
+                {isAuthenticated ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileActionsOpen(false);
+                      setMobileCategoriesOpen(false);
+                      handleUserClick();
+                    }}
+                    className="block w-full border-t border-slate-100 px-4 py-3 text-left text-sm font-semibold transition hover:bg-slate-50"
+                  >
+                    Profile
+                  </button>
+                ) : (
+                  <div className="grid gap-2 border-t border-slate-100 p-3">
+                    <button
+                      type="button"
+                      onClick={() => handleMobileNavigate('/login')}
+                      className="flex w-full items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 py-3 text-sm font-black text-white transition hover:bg-slate-800"
+                    >
+                      <LogIn className="h-4 w-4" />
+                      Login
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleMobileNavigate('/register')}
+                      className="flex w-full items-center justify-center gap-2 rounded-lg border border-amber-400 bg-amber-400 px-4 py-3 text-sm font-black text-slate-950 transition hover:bg-amber-300"
+                    >
+                      <UserPlus className="h-4 w-4" />
+                      Register
+                    </button>
+                  </div>
+                )}
                 <div className="border-t border-slate-100 px-4 py-3">
                   <label className="flex items-center justify-between gap-3 text-sm font-semibold text-slate-700">
                     <span>Currency</span>
