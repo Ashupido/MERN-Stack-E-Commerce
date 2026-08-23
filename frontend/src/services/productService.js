@@ -14,17 +14,12 @@ const productService = {
   },
 
   createProduct: async (productData) => {
-    // productData should be FormData for image upload
-    const response = await api.post(PRODUCT_BASE_URL, productData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    const response = await api.post(PRODUCT_BASE_URL, productData);
     return response.data;
   },
 
   updateProduct: async (id, productData) => {
-    const response = await api.put(`${PRODUCT_BASE_URL}/${id}`, productData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    const response = await api.put(`${PRODUCT_BASE_URL}/${id}`, productData);
     return response.data;
   },
 

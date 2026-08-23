@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import cartService from '../services/cartService';
 import { useAuth } from './AuthContext';
+import { normalizeProductImageUrl } from '../utils/helpers';
 
 const CartContext = createContext();
 
@@ -22,8 +23,8 @@ export const CartProvider = ({ children }) => {
 
       const itemImage =
         prod.images && prod.images.length > 0
-          ? prod.images[0]
-          : (prod.image || item.image || '');
+          ? normalizeProductImageUrl(prod.images[0])
+          : normalizeProductImageUrl(prod.image || item.image || '');
 
       return {
         _id: prod._id || item._id,
@@ -90,8 +91,8 @@ export const CartProvider = ({ children }) => {
             : (product.price || 0);
         const itemImage =
           product.images && product.images.length > 0
-            ? product.images[0]
-            : (product.image || '');
+            ? normalizeProductImageUrl(product.images[0])
+            : normalizeProductImageUrl(product.image || '');
 
         updatedCart.push({
           _id: productId,

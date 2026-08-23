@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import API from '../../services/api';
 import Spinner from '../../components/common/Spinner';
 import { useCart } from '../../context/CartContext';
+import { normalizeProductImageUrl } from '../../utils/helpers';
 
 const fallbackProductImage = 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=900&q=80';
 
@@ -81,7 +82,7 @@ export default function ProductDetail({ addToast }) {
               <div className="flex min-h-72 items-center justify-center rounded-lg border border-gray-700 bg-gray-950/80 p-8 sm:min-h-96">
                 <img
                   alt={product.name}
-                  src={product.images?.[0] ? `http://localhost:5000${product.images[0]}` : fallbackProductImage}
+                  src={normalizeProductImageUrl(product.images?.[0]) || fallbackProductImage}
                   className="h-full w-full max-w-full rounded-xl object-cover"
                 />
               </div>

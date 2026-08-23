@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { normalizeProductImageUrl } from '../../utils/helpers';
 
 const categoryOptions = [
   'Electronics',
@@ -43,9 +44,9 @@ export default function ProductForm({ initialData, onSubmit, onCancel, saving })
         sku: initialData.sku || '',
       });
       if (initialData.images && initialData.images.length > 0) {
-        setImagePreview(`http://localhost:5000/uploads/${initialData.images[0]}`);
+        setImagePreview(normalizeProductImageUrl(initialData.images[0]));
       } else if (initialData.image) {
-        setImagePreview(initialData.image);
+        setImagePreview(normalizeProductImageUrl(initialData.image));
       } else {
         setImagePreview('');
       }
@@ -72,7 +73,7 @@ export default function ProductForm({ initialData, onSubmit, onCancel, saving })
   };
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (file) {
       setImageFile(file);
       setImagePreview(URL.createObjectURL(file));
@@ -82,6 +83,13 @@ export default function ProductForm({ initialData, onSubmit, onCancel, saving })
   const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
+
+    console.log('IMAGE FILE DEBUG', {
+      hasFile: !!imageFile,
+      fileName: imageFile?.name,
+      size: imageFile?.size,
+      type: imageFile?.type,
+    });
 
     if (!formData.name.trim()) {
       setError('Product name is required');
@@ -263,7 +271,7 @@ export default function ProductForm({ initialData, onSubmit, onCancel, saving })
                   type="file"
                   name="image"
                   onChange={handleFileChange}
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/webp"
                   className="hidden"
                 />
               </label>

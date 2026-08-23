@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 export default function Register({ addToast }) {
@@ -10,7 +10,6 @@ export default function Register({ addToast }) {
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState('');
   const { register } = useAuth();
-  const navigate = useNavigate();
 
   useEffect(() => {
     document.title = 'Register | Pido';
@@ -49,14 +48,6 @@ export default function Register({ addToast }) {
       const response = await register(name.trim(), normalizedEmail, password);
       const user = response.user;
       addToast?.(`Welcome, ${user?.name || 'User'}! Your account was created successfully.`, 'success');
-
-      if (user?.role === 'admin') {
-        navigate('/admin/dashboard');
-      } else if (user?.role === 'seller') {
-        navigate('/seller/dashboard');
-      } else {
-        navigate('/profile');
-      }
     } catch (err) {
       const message = err.response?.data?.error || err.message || 'Registration failed';
       setFormError(message);

@@ -39,11 +39,10 @@ default: null
 
 // Images
 
-images: [
-{
-type:String
-}
-],
+images: {
+  type: [String],
+  default: []
+},
 
 
 // Category

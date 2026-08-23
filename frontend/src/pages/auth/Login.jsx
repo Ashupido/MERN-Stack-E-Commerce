@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 export default function Login({ addToast }) {
@@ -8,10 +8,6 @@ export default function Login({ addToast }) {
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState('');
   const { login } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const from = location.state?.from?.pathname || null;
 
   useEffect(() => {
     document.title = 'Login | Pido';
@@ -40,18 +36,6 @@ export default function Login({ addToast }) {
       const response = await login(normalizedEmail, password);
       const user = response.user;
       addToast?.(`Welcome back, ${user?.name || 'User'}!`, 'success');
-
-      if (from) {
-        navigate(from, { replace: true });
-      } else if (user?.role === 'admin') {
-        navigate('/admin/dashboard');
-      } else if (user?.role === 'seller') {
-        navigate('/seller/dashboard');
-      } else if (user?.role === 'manager') {
-        navigate('/profile');
-      } else {
-        navigate('/products');
-      }
     } catch (err) {
       const message = err.response?.data?.error || err.message || 'Login failed';
       setFormError(message);

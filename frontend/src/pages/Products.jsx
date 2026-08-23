@@ -26,7 +26,8 @@ import {
 } from 'lucide-react';
 import API from '../services/api';
 import Spinner from '../components/common/Spinner'; 
-import { useCart } from '../context/CartContext'; // Assuming this is the correct path
+import { useCart } from '../context/CartContext';
+import { normalizeProductImageUrl } from '../utils/helpers';
 const formatPrice = (price) => Number(price || 0).toFixed(2);
 
 const getRating = (id = '') => {
@@ -181,9 +182,11 @@ function Rating({ value, count = '2.5K' }) {
 }
 
 function ProductImage({ product, index, className = '' }) {
+  const imageUrl = normalizeProductImageUrl(product.image) || productVisuals[index % productVisuals.length];
+
   return (
     <img
-      src={product.image || productVisuals[index % productVisuals.length]}
+      src={imageUrl}
       alt={product.name}
       className={`h-full w-full object-cover ${className}`}
       loading="lazy"
@@ -267,9 +270,7 @@ export default function Products({ addToast }) {
         rating: getRating(product._id || product.name),
         oldPrice: Number(product.price || 0) * (index % 2 === 0 ? 2 : 1.8),
         discount: index % 2 === 0 ? '50% off' : '55% off',
-        image: product.images?.[0] // The path from DB already includes /uploads/
-          ? `http://localhost:5000${product.images[0]}`
-          : productVisuals[index % productVisuals.length]
+        image: normalizeProductImageUrl(product.images?.[0]) || productVisuals[index % productVisuals.length]
       }));
   }, [catalog, searchTerm, selectedCategoryLabel]);
 

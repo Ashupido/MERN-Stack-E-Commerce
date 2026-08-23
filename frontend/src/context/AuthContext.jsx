@@ -4,6 +4,21 @@ import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext();
 
+const getDashboardRoute = (role) => {
+  switch (role) {
+    case 'admin':
+      return '/admin/dashboard';
+    case 'manager':
+      return '/manager/dashboard';
+    case 'seller':
+      return '/seller/dashboard';
+    case 'user':
+      return '/';
+    default:
+      return '/';
+  }
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem('user');
@@ -40,47 +55,47 @@ export const AuthProvider = ({ children }) => {
   const handleLogin = async (email, password) => {
     try {
       const data = await authService.login(email, password);
+      const userData = data.user || data;
+
       if (data.token) {
         localStorage.setItem('token', data.token);
         setToken(data.token);
       }
-      if (data.user) {
-        localStorage.setItem('user', JSON.stringify(data.user));
-        setUser(data.user);
 
-        // Redirect based on user role
-        switch (data.user.role) {
-          case 'admin':
-            navigate('/admin/dashboard');
-            break;
-          case 'manager':
-            navigate('/manager/dashboard');
-            break;
-          case 'seller':
-            navigate('/seller/dashboard');
-            break;
-          default:
-            navigate('/');
-            break;
-        }
+      if (userData) {
+        const role = userData.role || userData.user?.role;
+        localStorage.setItem('user', JSON.stringify(userData));
+        setUser(userData);
+
+        const targetPath = getDashboardRoute(role);
+        navigate(targetPath, { replace: true });
       }
+
       window.dispatchEvent(new Event('auth-updated'));
       return data;
     } catch (err) {
-      throw err; // Re-throw error to be caught by the calling component
+      throw err;
     }
   };
 
   const handleRegister = async (name, email, password) => {
     const data = await authService.register(name, email, password);
+    const userData = data.user || data;
+
     if (data.token) {
       localStorage.setItem('token', data.token);
       setToken(data.token);
     }
-    if (data.user) {
-      localStorage.setItem('user', JSON.stringify(data.user));
-      setUser(data.user);
+
+    if (userData) {
+      const role = userData.role || userData.user?.role;
+      localStorage.setItem('user', JSON.stringify(userData));
+      setUser(userData);
+
+      const targetPath = getDashboardRoute(role);
+      navigate(targetPath, { replace: true });
     }
+
     window.dispatchEvent(new Event('auth-updated'));
     return data;
   };

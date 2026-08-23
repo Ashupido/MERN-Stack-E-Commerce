@@ -36,11 +36,7 @@ app.use(express.urlencoded({ extended: true }));
    STATIC FILES
    ========================================================= */
 
-// Serve uploaded images
-app.use(
-  "/uploads",
-  express.static(path.join(__dirname, "uploads"))
-);
+// Product images are uploaded directly to Cloudinary; local uploads are not used.
 
 /* =========================================================
    DATABASE

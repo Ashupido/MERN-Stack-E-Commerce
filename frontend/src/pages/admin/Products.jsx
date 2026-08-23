@@ -7,6 +7,7 @@ import ProductForm from "../../components/admin/ProductForm";
 import DataTable from "../../components/admin/DataTable";
 import Modal from "../../components/common/Modal";
 import StatusBadge from "../../components/common/StatusBadge";
+import { normalizeProductImageUrl } from '../../utils/helpers';
 import { Package, PackageCheck, PackageX, DollarSign } from 'lucide-react';
 
 export default function AdminProducts({ addToast }) {
@@ -466,25 +467,36 @@ export default function AdminProducts({ addToast }) {
 
         data={products.map(product => ({
 
-          image: (
+          image: (() => {
+            const originalImage = product.images?.[0] || "";
+            const normalizedImage = normalizeProductImageUrl(originalImage);
 
-            <img
-              src={
-                product.images?.[0]
-                  ? product.images[0].startsWith("/uploads/")
-                    ? `http://localhost:5000${product.images[0]}`
-                    : `http://localhost:5000/uploads/${product.images[0]}`
-                  : "/no-image.png"
-              }
-              alt={product.name}
-              className="h-16 w-16 rounded-lg object-cover"
-              onError={(e) => {
-                console.log("IMAGE ERROR:", e.target.src);
-                e.target.src = "/no-image.png";
-              }}
-            />
+            console.log("PRODUCT IMAGE DEBUG", {
+              product: product.name,
+              images: product.images,
+              originalImage,
+              normalizedImage,
+            });
 
-          ),
+            return (
+              <img
+                src={normalizedImage || '/no-image.png'}
+                alt={product.name}
+                className="h-16 w-16 rounded-lg object-cover"
+                onError={(e) => {
+                  console.error("PRODUCT IMAGE LOAD ERROR", {
+                    product: product.name,
+                    originalImage,
+                    normalizedImage,
+                  });
+
+                  if (e.currentTarget.src !== window.location.origin + '/no-image.png') {
+                    e.currentTarget.src = '/no-image.png';
+                  }
+                }}
+              />
+            );
+          })(),
           name: (
 
             <span className="font-bold">
