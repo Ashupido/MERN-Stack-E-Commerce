@@ -2,6 +2,7 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
+import { useCurrency } from '../../context/CurrencyContext';
 import {
   Baby,
   BookOpen,
@@ -38,6 +39,7 @@ const categories = [
 export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
   const { cartCount } = useCart();
+  const { currency, setCurrency } = useCurrency();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileActionsOpen, setMobileActionsOpen] = useState(false);
   const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false);
@@ -83,7 +85,7 @@ export default function Navbar() {
           <div className="flex items-center gap-10">
             <span className="inline-flex items-center gap-2">
               <Truck className="h-4 w-4" />
-              Free delivery on orders over $50
+              Free delivery on orders over ETB 8,000
             </span>
             <span className="inline-flex items-center gap-2">
               <PackageCheck className="h-4 w-4" />
@@ -94,9 +96,23 @@ export default function Navbar() {
             <span>Help Center</span>
             <NavLink to="/orders" className="hover:text-blue-700">Track Order</NavLink>
             <span>Sell on Pido</span>
-            <span className="inline-flex items-center gap-1">
-              English | USD <ChevronDown className="h-3.5 w-3.5" />
-            </span>
+            <label className="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs font-bold text-slate-800 shadow-sm">
+              <span>English</span>
+              <select
+                value={currency}
+                onChange={(event) => {
+                  setCurrency(event.target.value);
+                  setMobileActionsOpen(false);
+                  setMobileCategoriesOpen(false);
+                  setMobileMenuOpen(false);
+                }}
+                className="bg-transparent font-bold outline-none"
+                aria-label="Select currency"
+              >
+                <option value="ETB">ETB</option>
+                <option value="USD">USD</option>
+              </select>
+            </label>
           </div>
         </div>
       </div>
@@ -149,7 +165,24 @@ export default function Navbar() {
             </button>
           </form>
 
-          <div className="ml-auto hidden items-center gap-6 lg:flex">
+          <div className="ml-auto hidden items-center gap-4 lg:flex">
+            <label className="inline-flex items-center gap-2 rounded-md border border-white/15 bg-white/5 px-2 py-1.5 text-xs font-bold text-white">
+              <span className="text-slate-200">EN</span>
+              <select
+                value={currency}
+                onChange={(event) => {
+                  setCurrency(event.target.value);
+                  setMobileActionsOpen(false);
+                  setMobileCategoriesOpen(false);
+                  setMobileMenuOpen(false);
+                }}
+                className="bg-transparent font-bold text-white outline-none"
+                aria-label="Select currency"
+              >
+                <option value="ETB" className="text-slate-900">ETB</option>
+                <option value="USD" className="text-slate-900">USD</option>
+              </select>
+            </label>
             {isAuthenticated ? (
               <>
                 <button
@@ -226,6 +259,7 @@ export default function Navbar() {
                   ['Home', '/'],
                   ['Products', '/products'],
                   ['My Orders', '/orders'],
+                  ['Wishlist', '/wishlist'],
                   ['Cart', '/cart'],
                 ].map(([label, path]) => (
                   <button key={path} type="button" onClick={() => handleMobileNavigate(path)} className="block w-full px-4 py-3 text-left text-sm font-semibold transition hover:bg-slate-50">
@@ -267,6 +301,25 @@ export default function Navbar() {
                 >
                   Profile
                 </button>
+                <div className="border-t border-slate-100 px-4 py-3">
+                  <label className="flex items-center justify-between gap-3 text-sm font-semibold text-slate-700">
+                    <span>Currency</span>
+                    <select
+                      value={currency}
+                      onChange={(event) => {
+                        setCurrency(event.target.value);
+                        setMobileActionsOpen(false);
+                        setMobileCategoriesOpen(false);
+                        setMobileMenuOpen(false);
+                      }}
+                      className="rounded-md border border-slate-200 bg-white px-2 py-1.5 font-bold text-slate-900 outline-none"
+                      aria-label="Select currency"
+                    >
+                      <option value="ETB">ETB</option>
+                      <option value="USD">USD</option>
+                    </select>
+                  </label>
+                </div>
                 {isAuthenticated && (
                   <button
                     type="button"
@@ -370,6 +423,25 @@ export default function Navbar() {
             <NavLink to="/cart" onClick={() => setMobileMenuOpen(false)} className="rounded-md px-3 py-2 font-bold hover:bg-white/10">
               Cart ({cartCount})
             </NavLink>
+            <div className="rounded-md border border-white/10 bg-white/5 px-3 py-2">
+              <label className="flex items-center justify-between gap-3 text-sm font-bold text-white">
+                <span>Currency</span>
+                <select
+                  value={currency}
+                  onChange={(event) => {
+                    setCurrency(event.target.value);
+                    setMobileActionsOpen(false);
+                    setMobileCategoriesOpen(false);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="rounded-md border border-white/15 bg-slate-900 px-2 py-1 text-sm font-bold text-white outline-none"
+                  aria-label="Select currency"
+                >
+                  <option value="ETB">ETB</option>
+                  <option value="USD">USD</option>
+                </select>
+              </label>
+            </div>
             {isAuthenticated ? (
               <button onClick={handleLogout} className="rounded-md px-3 py-2 text-left font-bold text-red-400 hover:bg-white/10">
                 Logout

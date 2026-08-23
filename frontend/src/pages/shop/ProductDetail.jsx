@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import API from '../../services/api';
 import Spinner from '../../components/common/Spinner';
 import { useCart } from '../../context/CartContext';
+import { useCurrency } from '../../context/CurrencyContext';
 import { normalizeProductImageUrl } from '../../utils/helpers';
 
 const fallbackProductImage = 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=900&q=80';
@@ -11,6 +12,7 @@ export default function ProductDetail({ addToast }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const { formatCurrency } = useCurrency();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -95,14 +97,9 @@ export default function ProductDetail({ addToast }) {
                   {product.name}
                 </h1>
                 <p className="mt-4 text-3xl font-black text-emerald-300">
-                  {Number(product.price || 0).toFixed(2)}
+                  {formatCurrency(product.price)}
                 </p>
                 <p className="mt-4 text-base leading-7 text-gray-400">{product.description}</p>
-              </div>
-
-              <div className="rounded-lg border border-gray-800 bg-gray-950 p-4">
-                <p className="text-xs font-bold uppercase tracking-wide text-gray-500">Product ID</p>
-                <p className="mt-2 break-all font-mono text-sm text-gray-300">{product._id}</p>
               </div>
 
               <div className="grid gap-4">
@@ -155,7 +152,7 @@ export default function ProductDetail({ addToast }) {
                 </div>
                 <div className="rounded-lg bg-gray-950 p-4">
                   <p className="text-sm text-gray-400">Shipping</p>
-                  <p className="mt-1 font-black text-white">Free on orders $50+</p>
+                  <p className="mt-1 font-black text-white">Free on orders ETB 8,000+</p>
                 </div>
               </div>
             </div>

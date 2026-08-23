@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Award,
   BadgeCheck,
@@ -9,6 +9,7 @@ import {
   ChevronRight,
   Headphones,
   HeartHandshake,
+  Heart,
   Home,
   PackageCheck,
   RefreshCcw,
@@ -27,6 +28,7 @@ import {
 import API from '../services/api';
 import Spinner from '../components/common/Spinner'; 
 import { useCart } from '../context/CartContext';
+import { useCurrency } from '../context/CurrencyContext';
 import { normalizeProductImageUrl } from '../utils/helpers';
 const formatPrice = (price) => Number(price || 0).toFixed(2);
 
@@ -181,6 +183,46 @@ function Rating({ value, count = '2.5K' }) {
   );
 }
 
+function WishlistButton({ product, navigate }) {
+  const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const toggleWishlist = async (event) => {
+    event.stopPropagation();
+    if (!product._id || String(product._id).startsWith('fallback-')) return;
+    if (!localStorage.getItem('token')) {
+      navigate('/login');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      if (saved) {
+        await API.delete(`/wishlist/remove/${product._id}`);
+        setSaved(false);
+      } else {
+        await API.post('/wishlist/add', { productId: product._id });
+        setSaved(true);
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={toggleWishlist}
+      disabled={saving || !product._id || String(product._id).startsWith('fallback-')}
+      className={`absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md transition hover:scale-105 disabled:cursor-not-allowed disabled:opacity-70 ${saved ? 'text-rose-600' : 'text-slate-700'}`}
+      aria-label={saved ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
+      aria-pressed={saved}
+    >
+      <Heart className="h-5 w-5" fill={saved ? 'currentColor' : 'none'} />
+    </button>
+  );
+}
+
 function ProductImage({ product, index, className = '' }) {
   const imageUrl = normalizeProductImageUrl(product.image) || productVisuals[index % productVisuals.length];
 
@@ -203,7 +245,8 @@ export default function Products({ addToast }) {
   const activeMobileToggle = 'deals';
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { addToCart } = useCart(); // Use the cart context
+  const { addToCart } = useCart();
+  const { formatCurrency } = useCurrency();
 
   useEffect(() => {
    const fetchProducts = async () => {
@@ -292,7 +335,10 @@ export default function Products({ addToast }) {
   const goToProduct = (product) => {
     if (!String(product._id || '').startsWith('fallback-')) {
       navigate(`/product/${product._id}`);
+      return;
     }
+
+    navigate('/products');
   };
 
   if (loading) {
@@ -336,7 +382,7 @@ export default function Products({ addToast }) {
               </div>
             </div>
             <button
-              onClick={() => handleAddToCart(heroProduct)}
+              onClick={() => goToProduct(heroProduct)}
               className="mt-5 rounded-md bg-amber-400 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-amber-300 sm:mt-8"
             >
               Shop Now
@@ -361,7 +407,7 @@ export default function Products({ addToast }) {
               <p className="mt-3 max-w-md text-base font-medium leading-6 text-slate-800 sm:mt-5 sm:text-lg sm:leading-7">
                 Carefully crafted for rich flavor and a healthier you.
               </p>
-              <button className="mt-4 w-fit rounded-md bg-green-800 px-5 py-2.5 text-sm font-black text-white transition hover:bg-green-700 sm:mt-6 sm:px-6 sm:py-3">
+              <button onClick={() => navigate('/products')} className="mt-4 w-fit rounded-md bg-green-800 px-5 py-2.5 text-sm font-black text-white transition hover:bg-green-700 sm:mt-6 sm:px-6 sm:py-3">
                 Shop Now
               </button>
               <div className="mt-5 grid max-w-lg grid-cols-3 gap-2 text-[10px] font-bold leading-4 text-slate-700 sm:mt-8 sm:gap-3 sm:text-xs">
@@ -404,7 +450,7 @@ export default function Products({ addToast }) {
 
         <section className="order-3 mt-4 grid gap-4 rounded-lg bg-white p-5 shadow-sm lg:order-none lg:grid-cols-6">
           {[
-            [Truck, 'Free Delivery', 'On orders over $50'],
+            [Truck, 'Free Delivery', 'On orders over ETB 8,000'],
             [PackageCheck, 'Fast Shipping', 'Quick delivery at your door'],
             [BadgeCheck, 'Best Quality', '100% original products'],
             [Award, 'Top Brands', '1000+ trusted brands'],
@@ -482,14 +528,17 @@ export default function Products({ addToast }) {
                 <div className="grid gap-4">
                   {deals.map((product) => (
                     <article key={product._id || product.name} className="rounded-xl border border-slate-200 p-4">
-                      <button
-                        type="button"
-                        onClick={() => goToProduct(product)}
-                        className="mb-3 block aspect-square w-full overflow-hidden rounded-lg bg-slate-50"
-                        aria-label={`View ${product.name} details`}
-                      >
-                        <ProductImage product={product} index={0} className="h-full w-full object-cover" />
-                      </button>
+                      <div className="relative mb-3">
+                        <button
+                          type="button"
+                          onClick={() => goToProduct(product)}
+                          className="block aspect-square w-full overflow-hidden rounded-lg bg-slate-50"
+                          aria-label={`View ${product.name} details`}
+                        >
+                          <ProductImage product={product} index={0} className="h-full w-full object-cover" />
+                        </button>
+                        <WishlistButton product={product} navigate={navigate} />
+                      </div>
                       <button
                         type="button"
                         onClick={() => goToProduct(product)}
@@ -609,13 +658,16 @@ export default function Products({ addToast }) {
             ) : (
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">
                 {deals.map((product, index) => (
-                  <article key={product._id || product.name} className="group">
+                    <article key={product._id || product.name} className="group">
+                      <div className="relative">
                     <button
                       onClick={() => goToProduct(product)}
                       className="block aspect-square w-full overflow-hidden rounded-md bg-slate-50"
                     >
                       <ProductImage product={product} index={index} className="transition duration-200 group-hover:scale-105" />
                     </button>
+                      <WishlistButton product={product} navigate={navigate} />
+                      </div>
                     <div className="mt-3">
                       <Rating value={product.rating} />
                       <h3 className="mt-2 line-clamp-1 text-sm font-black">{product.name}</h3>
@@ -693,9 +745,9 @@ export default function Products({ addToast }) {
               <div className="relative max-w-[55%]">
                 <h2 className="text-xl font-black">{promo.title}</h2>
                 <p className="mt-2 text-sm font-semibold leading-5 text-slate-700">{promo.copy}</p>
-                <button className={`mt-4 rounded-md ${promo.button} px-4 py-2 text-xs font-black text-white`}>
+                <Link to="/products" className={`mt-4 inline-block rounded-md ${promo.button} px-4 py-2 text-xs font-black text-white`}>
                   Shop Now
-                </button>
+                </Link>
               </div>
             </article>
           ))}

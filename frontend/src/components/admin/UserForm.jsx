@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PasswordInput from '../common/PasswordInput';
 
 export default function UserForm({ initialData, onSubmit, onCancel, saving }) {
   const [formData, setFormData] = useState({
@@ -89,12 +90,12 @@ role: 'user',
             className="rounded bg-gray-700 p-2 text-white placeholder-gray-400"
             required
           />
-          <input
-            type="password"
+          <PasswordInput
+            id="admin-user-password"
             name="password"
-            placeholder={initialData ? 'New Password (optional)' : 'Password'}
             value={formData.password}
             onChange={handleChange}
+            placeholder={initialData ? 'New Password (optional)' : 'Password'}
             className="rounded bg-gray-700 p-2 text-white placeholder-gray-400"
             required={passwordRequired}
           />

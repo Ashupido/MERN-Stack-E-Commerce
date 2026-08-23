@@ -91,10 +91,12 @@ router.post("/", verifyToken, isAdmin, async (req, res) => {
       return res.status(400).json({ message: "User with this email already exists" });
     }
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const newUser = new User({
       name,
       email,
-      password, // The pre-save hook in the User model will hash this
+      password: hashedPassword,
       username, // Optional
       phone,
       role: role || "user",
@@ -117,7 +119,7 @@ router.post("/", verifyToken, isAdmin, async (req, res) => {
 // =====================================
 router.put("/:id", verifyToken, isAdmin, async (req, res) => {
   try {
-    const { name, email, phone, role, status } = req.body;
+    const { name, email, password, phone, role, status } = req.body;
 
     const user = await User.findById(req.params.id);
     if (!user) {
@@ -134,6 +136,9 @@ router.put("/:id", verifyToken, isAdmin, async (req, res) => {
     user.phone = phone ?? user.phone;
     user.role = role ?? user.role;
     user.status = status ?? user.status;
+    if (password) {
+      user.password = await bcrypt.hash(password, 10);
+    }
 
     await user.save();
     const updatedUser = user.toObject();

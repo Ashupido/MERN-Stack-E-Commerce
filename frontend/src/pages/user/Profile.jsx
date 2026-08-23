@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import PasswordInput from '../../components/common/PasswordInput';
 import authService from '../../services/authService';
 import Spinner from '../../components/common/Spinner';
 import Modal from '../../components/common/Modal';
@@ -210,12 +211,12 @@ export default function Profile({ addToast }) {
               <label className="mb-1 block text-sm font-bold text-gray-300">
                 New Password (leave blank to keep unchanged)
               </label>
-              <input
-                type="password"
+              <PasswordInput
+                id="profile-new-password"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 placeholder="Enter new password"
-                className="w-full rounded-lg border border-gray-700 bg-gray-950 px-4 py-2.5 text-white outline-none focus:border-amber-400"
+                className="rounded-lg border border-gray-700 bg-gray-950 px-4 py-2.5 text-white outline-none focus:border-amber-400"
               />
             </div>
 

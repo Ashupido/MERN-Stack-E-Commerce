@@ -13,6 +13,7 @@ import Register from '../pages/auth/Register';
 // User Pages
 import Profile from '../pages/user/Profile';
 import UserOrders from '../pages/user/Orders';
+import Wishlist from '../pages/user/Wishlist';
 
 // Cart & Checkout Pages
 import Cart from '../pages/cart/Cart';
@@ -65,6 +66,7 @@ export default function AppRoutes({ addToast }) {
         {/* These are protected and only accessible to the 'user' role */}
         <Route path="/profile" element={<ProtectedRoute requiredRole="user"><Profile addToast={addToast} /></ProtectedRoute>} />
         <Route path="/orders" element={<ProtectedRoute requiredRole="user"><UserOrders addToast={addToast} /></ProtectedRoute>} />
+        <Route path="/wishlist" element={<ProtectedRoute requiredRole="user"><Wishlist addToast={addToast} /></ProtectedRoute>} />
         <Route path="/checkout" element={<ProtectedRoute requiredRole="user"><Checkout addToast={addToast} /></ProtectedRoute>} />
         <Route path="/payment-success" element={<ProtectedRoute requiredRole="user"><PaymentSuccess addToast={addToast} /></ProtectedRoute>} />
       </Route>

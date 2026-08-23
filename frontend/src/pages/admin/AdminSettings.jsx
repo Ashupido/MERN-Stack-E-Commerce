@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../hooks/useToast';
 import { User, Lock, Settings, Save } from 'lucide-react';
+import PasswordInput from '../../components/common/PasswordInput';
 
 const SettingsCard = ({ title, icon, children }) => (
   <div className="bg-slate-800 border border-slate-700 rounded-xl shadow-lg">
@@ -15,7 +16,15 @@ const SettingsCard = ({ title, icon, children }) => (
   </div>
 );
 
-const InputField = ({ label, id, type = 'text', value, onChange }) => (
+const InputField = ({ label, id, type = 'text', value, onChange }) => type === 'password' ? (
+  <PasswordInput
+    id={id}
+    label={label}
+    value={value || ''}
+    onChange={onChange}
+    className="rounded-md border-slate-600 bg-slate-700 p-3 text-white placeholder-slate-400 focus:border-cyan-500 focus:ring-cyan-500"
+  />
+) : (
   <div>
     <label htmlFor={id} className="block text-sm font-medium text-slate-300 mb-2">
       {label}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import PasswordInput from '../../components/common/PasswordInput';
 
 export default function Register({ addToast }) {
   const [name, setName] = useState('');
@@ -93,33 +94,27 @@ export default function Register({ addToast }) {
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-bold text-gray-300">
-              Password
-            </label>
-            <input
-              type="password"
+            <PasswordInput
+              id="register-password"
+              label="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg border border-gray-700 bg-gray-950 px-4 py-3 text-white outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20"
+              className="rounded-lg border border-gray-700 bg-gray-950 px-4 py-3 text-white outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20"
               placeholder="Password"
               required
             />
             <p className="mt-1 text-xs text-gray-400">Minimum 6 characters</p>
           </div>
 
-          <div>
-            <label className="mb-2 block text-sm font-bold text-gray-300">
-              Confirm Password
-            </label>
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full rounded-lg border border-gray-700 bg-gray-950 px-4 py-3 text-white outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20"
-              placeholder="Confirm password"
-              required
-            />
-          </div>
+          <PasswordInput
+            id="register-confirm-password"
+            label="Confirm Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="rounded-lg border border-gray-700 bg-gray-950 px-4 py-3 text-white outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20"
+            placeholder="Confirm password"
+            required
+          />
 
           {formError && (
             <div className="rounded-lg border border-red-500/30 bg-red-950/70 px-3 py-2 text-sm font-medium text-red-100">
