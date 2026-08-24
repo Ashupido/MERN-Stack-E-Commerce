@@ -15,6 +15,9 @@ const createToken = (user) => jwt.sign(
 );
 
 const getFrontendUrl = () => process.env.FRONTEND_URL || "http://localhost:5173";
+const getGoogleCallbackUrl = () => (
+  process.env.GOOGLE_CALLBACK_URL || "http://localhost:5000/api/auth/google/callback"
+);
 
 // Start Google OAuth. The redirect URI must match the Google Cloud client exactly.
 router.get("/google", (req, res) => {
@@ -22,7 +25,7 @@ router.get("/google", (req, res) => {
     return res.status(503).json({ error: "Google login is not configured" });
   }
 
-  const redirectUri = process.env.GOOGLE_REDIRECT_URI || "http://localhost:5000/api/auth/google/callback";
+  const redirectUri = getGoogleCallbackUrl();
   const params = new URLSearchParams({
     client_id: process.env.GOOGLE_CLIENT_ID,
     redirect_uri: redirectUri,
@@ -40,10 +43,10 @@ router.get("/google/callback", async (req, res) => {
   try {
     const { code, error } = req.query;
     if (error || !code) {
-      return res.redirect(`${getFrontendUrl()}/login?oauthError=Google%20login%20was%20cancelled`);
+      return res.redirect(`${getFrontendUrl()}/login?oauthError=${encodeURIComponent("Google login was cancelled")}`);
     }
 
-    const redirectUri = process.env.GOOGLE_REDIRECT_URI || "http://localhost:5000/api/auth/google/callback";
+    const redirectUri = getGoogleCallbackUrl();
     const tokenResponse = await axios.post(
       "https://oauth2.googleapis.com/token",
       new URLSearchParams({
@@ -76,7 +79,7 @@ router.get("/google/callback", async (req, res) => {
       });
     } else {
       if (user.status === "inactive") {
-        return res.redirect(`${getFrontendUrl()}/login?oauthError=Your%20account%20is%20inactive`);
+        return res.redirect(`${getFrontendUrl()}/login?oauthError=${encodeURIComponent("Your account is inactive. Contact administrator.")}`);
       }
       user.lastLogin = new Date();
       if (!user.avatar && picture) user.avatar = picture;
@@ -86,7 +89,7 @@ router.get("/google/callback", async (req, res) => {
     return res.redirect(`${getFrontendUrl()}/oauth/callback?token=${encodeURIComponent(createToken(user))}`);
   } catch (err) {
     console.error("Google OAuth error:", err.response?.data || err.message);
-    return res.redirect(`${getFrontendUrl()}/login?oauthError=Google%20login%20failed`);
+    return res.redirect(`${getFrontendUrl()}/login?oauthError=${encodeURIComponent("Google login failed")}`);
   }
 });
 
