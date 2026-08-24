@@ -12,6 +12,8 @@ export default function Profile({ addToast }) {
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [passwordData, setPasswordData] = useState({ password: '', confirmPassword: '' });
+  const [passwordSaving, setPasswordSaving] = useState(false);
 
   // Form states
   const [formData, setFormData] = useState({
@@ -31,7 +33,6 @@ export default function Profile({ addToast }) {
         name: data.name || '',
         phone: data.phone || '',
         address: data.address || '',
-        password: '',
       });
     } catch (err) {
       const msg = err.response?.data?.error || err.message || 'Failed to load profile';
@@ -52,7 +53,6 @@ export default function Profile({ addToast }) {
         name: profile.name || '',
         phone: profile.phone || '',
         address: profile.address || '',
-        password: '',
       });
     }
     setIsEditing(true);
@@ -67,10 +67,6 @@ export default function Profile({ addToast }) {
         phone: formData.phone,
         address: formData.address,
       };
-      if (formData.password && formData.password.trim() !== '') {
-        payload.password = formData.password.trim();
-      }
-
       const res = await updateUserProfile(payload);
       setProfile(res.user || { ...profile, ...payload });
       addToast?.('Profile updated successfully!', 'success');
@@ -80,6 +76,22 @@ export default function Profile({ addToast }) {
       addToast?.(msg, 'error');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleSetPassword = async (event) => {
+    event.preventDefault();
+    setPasswordSaving(true);
+    try {
+      await authService.setPassword(passwordData.password, passwordData.confirmPassword);
+      setPasswordData({ password: '', confirmPassword: '' });
+      const data = await authService.getProfile();
+      setProfile(data);
+      addToast?.('Password updated successfully!', 'success');
+    } catch (err) {
+      addToast?.(err.response?.data?.error || 'Unable to update password', 'error');
+    } finally {
+      setPasswordSaving(false);
     }
   };
 
@@ -158,6 +170,16 @@ export default function Profile({ addToast }) {
                 </div>
               </div>
             </div>
+
+            <div className="rounded-lg bg-gray-950 p-4 sm:col-span-2">
+              <p className="text-xs font-bold uppercase text-gray-500">Password Access</p>
+              <p className="mt-1 text-base font-bold text-white">{profile.hasPassword === false ? 'Google sign-in only' : 'Pido password enabled'}</p>
+              <form onSubmit={handleSetPassword} className="mt-4 grid gap-3 sm:grid-cols-2">
+                <PasswordInput id="profile-password" label={profile.hasPassword === false ? 'Create Pido Password' : 'Change Password'} value={passwordData.password} onChange={(event) => setPasswordData({ ...passwordData, password: event.target.value })} required className="rounded-lg border border-gray-700 bg-gray-900 px-4 py-2.5 text-white outline-none focus:border-amber-400" />
+                <PasswordInput id="profile-confirm-password" label="Confirm Password" value={passwordData.confirmPassword} onChange={(event) => setPasswordData({ ...passwordData, confirmPassword: event.target.value })} required className="rounded-lg border border-gray-700 bg-gray-900 px-4 py-2.5 text-white outline-none focus:border-amber-400" />
+                <button type="submit" disabled={passwordSaving} className="rounded-lg bg-amber-400 px-5 py-2 text-sm font-black text-slate-950 hover:bg-amber-300 disabled:opacity-50 sm:col-span-2">{passwordSaving ? 'Saving...' : profile.hasPassword === false ? 'Create Pido Password' : 'Change Password'}</button>
+              </form>
+            </div>
           </div>
         )}
 
@@ -204,19 +226,6 @@ export default function Profile({ addToast }) {
                 placeholder="Street address, City, Country"
                 rows={3}
                 className="w-full rounded-lg border border-gray-700 bg-gray-950 px-4 py-2.5 text-white outline-none focus:border-amber-400"
-              />
-            </div>
-
-            <div>
-              <label className="mb-1 block text-sm font-bold text-gray-300">
-                New Password (leave blank to keep unchanged)
-              </label>
-              <PasswordInput
-                id="profile-new-password"
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                placeholder="Enter new password"
-                className="rounded-lg border border-gray-700 bg-gray-950 px-4 py-2.5 text-white outline-none focus:border-amber-400"
               />
             </div>
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import PasswordInput from '../../components/common/PasswordInput';
+import GoogleAuthButton from '../../components/GoogleAuthButton';
 
 export default function Register({ addToast }) {
   const [name, setName] = useState('');
@@ -131,6 +132,13 @@ export default function Register({ addToast }) {
             {loading ? 'Creating Account...' : 'Register'}
           </button>
         </form>
+
+        <div className="my-5 flex items-center gap-3 text-xs font-bold uppercase tracking-wide text-gray-500">
+          <span className="h-px flex-1 bg-gray-700" />
+          <span>OR</span>
+          <span className="h-px flex-1 bg-gray-700" />
+        </div>
+        <GoogleAuthButton disabled={loading} />
 
         <div className="mt-6 border-t border-gray-800 pt-6 text-center">
           <p className="text-gray-400">

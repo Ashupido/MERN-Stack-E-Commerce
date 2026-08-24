@@ -14,6 +14,21 @@ const authService = {
     return response.data;
   },
 
+  setPassword: async (password, confirmPassword) => {
+    const response = await api.post(`${AUTH_BASE_URL}/set-password`, { password, confirmPassword });
+    return response.data;
+  },
+
+  forgotPassword: async (email) => {
+    const response = await api.post(`${AUTH_BASE_URL}/forgot-password`, { email });
+    return response.data;
+  },
+
+  resetPassword: async (token, password, confirmPassword) => {
+    const response = await api.post(`${AUTH_BASE_URL}/reset-password`, { token, password, confirmPassword });
+    return response.data;
+  },
+
   getProfile: async () => {
     const response = await api.get(`${USER_BASE_URL}/profile`);
     return response.data;

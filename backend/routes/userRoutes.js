@@ -8,7 +8,7 @@ const router = express.Router();
 // GET USER PROFILE
 router.get("/profile", verifyToken, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select("-password");
+    const user = await User.findById(req.user.id).select("-password -passwordResetTokenHash -passwordResetExpiresAt");
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -34,11 +34,12 @@ router.put("/profile", verifyToken, async (req, res) => {
 
     if (password && password.trim() !== "") {
       user.password = await bcrypt.hash(password.trim(), 10);
+      user.hasPassword = true;
     }
 
     await user.save();
 
-    const updatedUser = await User.findById(user._id).select("-password");
+    const updatedUser = await User.findById(user._id).select("-password -passwordResetTokenHash -passwordResetExpiresAt");
 
     res.json({
       message: "Profile updated successfully",

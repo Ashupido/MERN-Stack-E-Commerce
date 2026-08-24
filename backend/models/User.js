@@ -23,6 +23,21 @@ const userSchema = new mongoose.Schema({
     required: true
   },
 
+  hasPassword: {
+    type: Boolean,
+    default: true
+  },
+
+  passwordResetTokenHash: {
+    type: String,
+    default: null
+  },
+
+  passwordResetExpiresAt: {
+    type: Date,
+    default: null
+  },
+
 
   // User permission level
   role: {
