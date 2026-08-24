@@ -1,6 +1,7 @@
 export default function GoogleAuthButton({ disabled = false }) {
   const handleGoogleLogin = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL}/api/auth/google`;
+    const apiUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '').replace(/\/api$/, '');
+    window.location.href = `${apiUrl}/api/auth/google`;
   };
 
   return (
