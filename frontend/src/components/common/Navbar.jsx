@@ -8,7 +8,6 @@ import {
   BookOpen,
   Car,
   ChevronDown,
-  Ellipsis,
   Home,
   LogIn,
   Menu,
@@ -46,12 +45,14 @@ export default function Navbar() {
   const [mobileActionsOpen, setMobileActionsOpen] = useState(false);
   const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchCategory, setSearchCategory] = useState('All');
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     setSearchQuery(params.get('q') || '');
+    setSearchCategory(params.get('category') || 'All');
   }, [location.search]);
 
   const handleLogout = () => {
@@ -66,6 +67,14 @@ export default function Navbar() {
     setMobileActionsOpen(false);
     setMobileCategoriesOpen(false);
     navigate(path);
+  };
+
+  const handleSearchCategoryChange = (category) => {
+    setSearchCategory(category);
+    const next = new URLSearchParams();
+    if (category !== 'All') next.set('category', category);
+    if (searchQuery.trim()) next.set('q', searchQuery.trim());
+    navigate(`/products${next.toString() ? `?${next.toString()}` : ''}`);
   };
 
   const handleUserClick = () => {
@@ -141,20 +150,24 @@ export default function Navbar() {
           <form
             onSubmit={(event) => {
               event.preventDefault();
-              const params = new URLSearchParams(location.search);
-              const category = params.get('category');
               const next = new URLSearchParams();
-              if (category) next.set('category', category);
+              if (searchCategory !== 'All') next.set('category', searchCategory);
               if (searchQuery.trim()) next.set('q', searchQuery.trim());
               navigate(`/products${next.toString() ? `?${next.toString()}` : ''}`);
             }}
             className="hidden min-w-0 flex-1 overflow-hidden rounded-md bg-white shadow-sm ring-1 ring-black/10 md:flex"
           >
-            <button type="button" className="border-r border-slate-200 px-5 text-sm font-semibold text-slate-900">
-              <span className="inline-flex items-center gap-1">
-                All <ChevronDown className="h-3.5 w-3.5" />
-              </span>
-            </button>
+            <label className="flex shrink-0 items-center border-r border-slate-200 px-4 text-sm font-semibold text-slate-900">
+              <select
+                value={searchCategory}
+                onChange={(event) => handleSearchCategoryChange(event.target.value)}
+                className="max-w-36 bg-transparent outline-none"
+                aria-label="Search by category"
+              >
+                <option value="All">All</option>
+                {categories.map(([, category]) => <option key={category} value={category}>{category}</option>)}
+              </select>
+            </label>
             <input
               type="search"
               value={searchQuery}
@@ -253,7 +266,7 @@ export default function Navbar() {
               aria-label={mobileActionsOpen ? 'Close navigation menu' : 'Open navigation menu'}
               aria-expanded={mobileActionsOpen}
             >
-              {mobileActionsOpen ? <X className="h-6 w-6" /> : <Ellipsis className="h-6 w-6" />}
+              {mobileActionsOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
             {mobileActionsOpen && (
               <div className="absolute right-0 top-12 z-50 max-h-[min(70vh,30rem)] w-60 overflow-y-auto rounded-xl border border-slate-200 bg-white py-1 text-slate-900 shadow-xl">
@@ -372,15 +385,22 @@ export default function Navbar() {
           <form
             onSubmit={(event) => {
               event.preventDefault();
-              const params = new URLSearchParams(location.search);
-              const category = params.get('category');
               const next = new URLSearchParams();
-              if (category) next.set('category', category);
+              if (searchCategory !== 'All') next.set('category', searchCategory);
               if (searchQuery.trim()) next.set('q', searchQuery.trim());
               navigate(`/products${next.toString() ? `?${next.toString()}` : ''}`);
             }}
             className="flex w-full overflow-hidden rounded-md bg-white shadow-sm"
           >
+            <select
+              value={searchCategory}
+              onChange={(event) => handleSearchCategoryChange(event.target.value)}
+              className="max-w-28 shrink-0 border-r border-slate-200 bg-white px-2 text-xs font-semibold text-slate-900 outline-none"
+              aria-label="Search by category"
+            >
+              <option value="All">All</option>
+              {categories.map(([, category]) => <option key={category} value={category}>{category}</option>)}
+            </select>
             <input
               type="search"
               value={searchQuery}

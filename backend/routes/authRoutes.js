@@ -1,10 +1,94 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const axios = require("axios");
+const crypto = require("crypto");
 
 const User = require("../models/User");
 
 const router = express.Router();
+
+const createToken = (user) => jwt.sign(
+  { id: user._id, role: user.role },
+  process.env.JWT_SECRET || "secretkey",
+  { expiresIn: "1d" }
+);
+
+const getFrontendUrl = () => process.env.FRONTEND_URL || "http://localhost:5173";
+
+// Start Google OAuth. The redirect URI must match the Google Cloud client exactly.
+router.get("/google", (req, res) => {
+  if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+    return res.status(503).json({ error: "Google login is not configured" });
+  }
+
+  const redirectUri = process.env.GOOGLE_REDIRECT_URI || "http://localhost:5000/api/auth/google/callback";
+  const params = new URLSearchParams({
+    client_id: process.env.GOOGLE_CLIENT_ID,
+    redirect_uri: redirectUri,
+    response_type: "code",
+    scope: "openid email profile",
+    access_type: "online",
+    prompt: "select_account",
+  });
+
+  return res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`);
+});
+
+// Exchange Google's code, upsert the Pido user, then hand off the normal Pido JWT.
+router.get("/google/callback", async (req, res) => {
+  try {
+    const { code, error } = req.query;
+    if (error || !code) {
+      return res.redirect(`${getFrontendUrl()}/login?oauthError=Google%20login%20was%20cancelled`);
+    }
+
+    const redirectUri = process.env.GOOGLE_REDIRECT_URI || "http://localhost:5000/api/auth/google/callback";
+    const tokenResponse = await axios.post(
+      "https://oauth2.googleapis.com/token",
+      new URLSearchParams({
+        code,
+        client_id: process.env.GOOGLE_CLIENT_ID,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET,
+        redirect_uri: redirectUri,
+        grant_type: "authorization_code",
+      }).toString(),
+      { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+    );
+
+    const profileResponse = await axios.get("https://openidconnect.googleapis.com/v1/userinfo", {
+      headers: { Authorization: `Bearer ${tokenResponse.data.access_token}` },
+    });
+    const { email, name, picture } = profileResponse.data;
+    if (!email) throw new Error("Google did not provide an email address");
+
+    let user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      user = await User.create({
+        name: name || email.split("@")[0],
+        email: email.toLowerCase(),
+        password: await bcrypt.hash(crypto.randomBytes(32).toString("hex"), 10),
+        role: "user",
+        status: "active",
+        avatar: picture || "",
+        isVerified: true,
+        lastLogin: new Date(),
+      });
+    } else {
+      if (user.status === "inactive") {
+        return res.redirect(`${getFrontendUrl()}/login?oauthError=Your%20account%20is%20inactive`);
+      }
+      user.lastLogin = new Date();
+      if (!user.avatar && picture) user.avatar = picture;
+      await user.save();
+    }
+
+    return res.redirect(`${getFrontendUrl()}/oauth/callback?token=${encodeURIComponent(createToken(user))}`);
+  } catch (err) {
+    console.error("Google OAuth error:", err.response?.data || err.message);
+    return res.redirect(`${getFrontendUrl()}/login?oauthError=Google%20login%20failed`);
+  }
+});
 
 
 // =====================================

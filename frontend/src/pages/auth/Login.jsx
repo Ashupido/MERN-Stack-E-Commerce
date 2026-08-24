@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import PasswordInput from '../../components/common/PasswordInput';
 
@@ -7,12 +7,22 @@ export default function Login({ addToast }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [oauthLoading, setOauthLoading] = useState(false);
   const [formError, setFormError] = useState('');
   const { login } = useAuth();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     document.title = 'Login | Pido';
-  }, []);
+    const oauthError = searchParams.get('oauthError');
+    if (oauthError) setFormError(oauthError);
+  }, [searchParams]);
+
+  const handleGoogleLogin = () => {
+    setOauthLoading(true);
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    window.location.href = `${apiUrl}/auth/google`;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -92,6 +102,20 @@ export default function Login({ addToast }) {
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
+
+        <button
+          type="button"
+          onClick={handleGoogleLogin}
+          disabled={loading || oauthLoading}
+          className="mt-4 flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-3 font-black text-gray-900 transition hover:bg-gray-100 disabled:cursor-wait disabled:opacity-70"
+        >
+          {oauthLoading ? (
+            <span className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-gray-900" />
+          ) : (
+            <span className="text-lg font-black" aria-hidden="true">G</span>
+          )}
+          {oauthLoading ? 'Connecting...' : 'Continue with Google'}
+        </button>
 
         <div className="mt-6 border-t border-gray-800 pt-6 text-center">
           <p className="text-gray-400">

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useCallback, useContext, useState, useEffect } from 'react';
 import authService from '../services/authService';
 import { useNavigate } from 'react-router-dom';
 
@@ -100,6 +100,17 @@ export const AuthProvider = ({ children }) => {
     return data;
   };
 
+  const handleOAuthLogin = useCallback(async (oauthToken) => {
+    localStorage.setItem('token', oauthToken);
+    setToken(oauthToken);
+    const profile = await authService.getProfile();
+    localStorage.setItem('user', JSON.stringify(profile));
+    setUser(profile);
+    navigate(getDashboardRoute(profile.role), { replace: true });
+    window.dispatchEvent(new Event('auth-updated'));
+    return profile;
+  }, [navigate]);
+
   const updateUserProfile = async (updateData) => {
     const response = await authService.updateProfile(updateData);
     if (response.user) {
@@ -125,6 +136,7 @@ export const AuthProvider = ({ children }) => {
     role: user?.role || null,
     isAuthenticated: !!token && !!user,
     login: handleLogin,
+    loginWithToken: handleOAuthLogin,
     register: handleRegister,
     updateUserProfile,
     logout: handleLogout,

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Award,
   BadgeCheck,
@@ -244,6 +244,7 @@ export default function Products({ addToast }) {
   const activeMobileToggle = 'deals';
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { addToCart } = useCart();
 
   useEffect(() => {
@@ -344,7 +345,7 @@ export default function Products({ addToast }) {
   }
 
   const heroProduct = featuredProducts[0] || fallbackProducts[0];
-  const deals = featuredProducts.slice(0, 5);
+  const deals = location.pathname === '/products' ? featuredProducts : featuredProducts.slice(0, 5);
   const topSelling = featuredProducts.slice(0, 4);
 
   return (
@@ -523,7 +524,7 @@ export default function Products({ addToast }) {
                   No products found
                 </div>
               ) : (
-                <div className="grid gap-4">
+                <div className={location.pathname === '/products' ? 'grid grid-cols-2 gap-3' : 'grid gap-4'}>
                   {deals.map((product) => (
                     <article key={product._id || product.name} className="rounded-xl border border-slate-200 p-4">
                       <div className="relative mb-3">

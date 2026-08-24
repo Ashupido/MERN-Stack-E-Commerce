@@ -9,6 +9,7 @@ import SellerLayout from '../pages/admin/SellerLayout';
 // Auth Pages
 import Login from '../pages/auth/Login';
 import Register from '../pages/auth/Register';
+import OAuthCallback from '../pages/auth/OAuthCallback';
 
 // User Pages
 import Profile from '../pages/user/Profile';
@@ -61,6 +62,7 @@ export default function AppRoutes({ addToast }) {
         <Route path="/product/:id" element={<ProductDetails addToast={addToast} />} />
         <Route path="/login" element={<Login addToast={addToast} />} />
         <Route path="/register" element={<Register addToast={addToast} />} />
+        <Route path="/oauth/callback" element={<OAuthCallback />} />
         <Route path="/cart" element={<Cart addToast={addToast} />} />
         <Route path="/payment" element={<Payment addToast={addToast} />} />
 

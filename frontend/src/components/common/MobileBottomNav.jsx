@@ -20,9 +20,9 @@ export default function MobileBottomNav() {
             key={label}
             to={to}
             end={end}
-            className={({ isActive }) => `relative flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-lg text-[11px] font-bold transition ${isActive ? 'text-blue-700' : 'text-slate-500 hover:text-slate-800'}`}
+            className={({ isActive }) => `relative flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-xl text-[11px] font-bold transition ${isActive ? 'bg-blue-50 text-blue-700' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'}`}
           >
-            <span className="relative">
+            <span className="relative flex h-7 items-center justify-center">
               <Icon className="h-5 w-5" strokeWidth={2.25} />
               {label === 'Cart' && cartCount > 0 && (
                 <span className="absolute -right-3 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-400 px-1 text-[9px] font-black text-slate-950">
