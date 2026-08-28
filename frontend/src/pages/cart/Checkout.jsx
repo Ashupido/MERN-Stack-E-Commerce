@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Package } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import orderService from '../../services/orderService';
 import paymentService from '../../services/paymentService';
 import Spinner from '../../components/common/Spinner';
+import { normalizeProductImageUrl } from '../../utils/helpers';
 
 export default function Checkout({ addToast }) {
   const { cart, cartTotal } = useCart();
@@ -107,9 +109,22 @@ export default function Checkout({ addToast }) {
               <div className="mt-4 divide-y divide-gray-800">
                 {cart.map((item) => (
                   <div key={item._id || item.productId} className="flex justify-between py-3">
-                    <div>
-                      <p className="font-bold text-white">{item.name}</p>
+                    <div className="flex min-w-0 items-center gap-3">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-blue-500/10 text-blue-200 ring-1 ring-blue-400/20">
+                        <Package className="h-5 w-5" />
+                        {normalizeProductImageUrl(item.image || item.images?.[0] || item.product?.image || item.product?.images?.[0]) && (
+                          <img
+                            src={normalizeProductImageUrl(item.image || item.images?.[0] || item.product?.image || item.product?.images?.[0])}
+                            alt=""
+                            className="h-full w-full object-cover"
+                            onError={(event) => { event.currentTarget.style.display = 'none'; }}
+                          />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="truncate font-bold text-white">{item.name}</p>
                       <p className="text-xs text-gray-400">Qty: {item.quantity} x ETB {Number(item.price).toFixed(2)}</p>
+                      </div>
                     </div>
                     <p className="font-black text-emerald-300">
                       ETB {(item.quantity * item.price).toFixed(2)}

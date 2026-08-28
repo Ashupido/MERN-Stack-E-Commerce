@@ -458,7 +458,7 @@ export default function Navbar() {
                 <NavLink to="/profile" onClick={() => setMobileMenuOpen(false)} className="rounded-md px-3 py-2 font-bold hover:bg-white/10">
                   Profile
                 </NavLink>
-                <NavLink to="/orders" onClick={() => setMobileMenuOpen(false)} className="rounded-md px-3 py-2 font-bold hover:bg-white/10">
+                  <NavLink to="/orders" onClick={() => setMobileMenuOpen(false)} className="rounded-md px-3 py-2 font-bold hover:bg-white/10">
                   Orders
                 </NavLink>
               </>

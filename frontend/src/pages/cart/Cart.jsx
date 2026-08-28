@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Package } from 'lucide-react';
 import orderService from '../../services/orderService.js';
 import { useCart } from '../../context/CartContext';
+import { normalizeProductImageUrl } from '../../utils/helpers';
 
 export default function Cart({ addToast }) {
   const { cart, updateQuantity: updateCartQuantity, removeFromCart } = useCart();
@@ -98,8 +100,16 @@ export default function Cart({ addToast }) {
                 >
                   <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-center">
                     <div className="flex gap-4">
-                      <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 font-black text-blue-200 ring-1 ring-blue-400/20">
-                        {item.name?.slice(0, 1)?.toUpperCase() || 'P'}
+                      <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-blue-500/10 font-black text-blue-200 ring-1 ring-blue-400/20">
+                        <Package className="h-6 w-6" />
+                        {normalizeProductImageUrl(item.image || item.images?.[0] || item.product?.image || item.product?.images?.[0]) && (
+                          <img
+                            src={normalizeProductImageUrl(item.image || item.images?.[0] || item.product?.image || item.product?.images?.[0])}
+                            alt=""
+                            className="h-full w-full object-cover"
+                            onError={(event) => { event.currentTarget.style.display = 'none'; }}
+                          />
+                        )}
                       </div>
                       <div>
                         <h2 className="text-lg font-black text-white">{item.name}</h2>
