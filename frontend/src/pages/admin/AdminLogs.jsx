@@ -126,6 +126,7 @@ export default function AdminLogs({ addToast }) {
               { key: 'level', label: 'Level' },
               { key: 'action', label: 'Action' },
               { key: 'details', label: 'Details' },
+              { key: 'actor', label: 'Actor' },
               { key: 'user', label: 'User' },
               { key: 'timestamp', label: 'Timestamp' },
             ]}
@@ -135,6 +136,7 @@ export default function AdminLogs({ addToast }) {
                 level: <div className={`flex items-center gap-2 font-semibold ${color}`}><Icon className="h-4 w-4" /> {label}</div>,
                 action: <span className="font-bold text-white">{log.action}</span>,
                 details: <span className="text-sm text-slate-400">{log.details || log.activity || log.targetId || 'N/A'}</span>,
+                actor: <span className="rounded-full border border-cyan-500/20 bg-cyan-500/10 px-2 py-1 text-xs font-bold uppercase text-cyan-300">{log.actorRole || 'admin'}</span>,
                 user: <span className="text-sm text-slate-300">{log.admin?.name || log.adminEmail || 'System'}</span>,
                 timestamp: <span className="text-sm text-slate-500">{new Date(log.createdAt).toLocaleString()}</span>,
               };

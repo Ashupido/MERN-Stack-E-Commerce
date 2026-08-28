@@ -11,6 +11,11 @@ const managerService = {
     return response.data;
   },
 
+  getUsers: async (params) => {
+    const response = await api.get('/manager/users', { params });
+    return response.data;
+  },
+
   updateOrderStatus: async (orderId, status) => {
     const response = await api.put(`/manager/orders/${orderId}/status`, { status });
     return response.data;

@@ -4,8 +4,10 @@ const mongoose = require("mongoose");
 
 const Order = require("../models/Order");
 const Product = require("../models/Product");
+const User = require("../models/User");
 const verifyToken = require("../middleware/authMiddleware");
 const isManager = require("../middleware/managerMiddleware");
+const logActivity = require("../utils/activityLogger");
 
 
 // =====================================
@@ -95,6 +97,45 @@ router.get("/orders", verifyToken, isManager, async (req, res) => {
 });
 
 // =====================================
+// GET USERS (read-only for Manager)
+// GET /api/manager/users
+// =====================================
+router.get("/users", verifyToken, isManager, async (req, res) => {
+  try {
+    const { search, role, status, page = 1, limit = 10 } = req.query;
+    const filter = {};
+
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+      ];
+    }
+    if (role && role !== "all") filter.role = role;
+    if (status && status !== "all") filter.status = status;
+
+    const pageNum = Number(page) || 1;
+    const limitNum = parseInt(limit, 10) || 10;
+    const skip = (pageNum - 1) * limitNum;
+    const users = await User.find(filter)
+      .select("-password")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limitNum);
+    const totalUsers = await User.countDocuments(filter);
+
+    res.json({
+      totalUsers,
+      currentPage: pageNum,
+      totalPages: Math.ceil(totalUsers / limitNum) || 1,
+      users,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// =====================================
 // UPDATE PRODUCT STOCK (MANAGER)
 // PUT /api/manager/products/:id/stock
 // =====================================
@@ -113,6 +154,8 @@ router.put("/products/:id/stock", verifyToken, isManager, async (req, res) => {
 
     product.stock = Number(stock);
     await product.save();
+
+    await logActivity(req, "Updated Product Stock", `Updated stock for ${product.name}`, `Stock: ${product.stock}`, product._id);
 
     res.json({ message: "Product stock updated successfully", product });
   } catch (err) {
@@ -142,6 +185,8 @@ router.put("/orders/:id/status", verifyToken, isManager, async (req, res) => {
       if (!order) {
         return res.status(404).json({ message: "Order not found" });
       }
+
+      await logActivity(req, "Updated Order Status", `Updated order status to ${status}`, `Order ID: ${order._id}`, order._id);
 
       res.json({ message: "Order status updated successfully", order });
     } catch (err) {

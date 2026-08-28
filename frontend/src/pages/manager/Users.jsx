@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import userService from '../../services/userService';
+import managerService from '../../services/managerService';
 import DataTable from '../../components/admin/DataTable';
 import Spinner from '../../components/common/Spinner';
 import StatusBadge from '../../components/common/StatusBadge';
@@ -16,7 +16,7 @@ export default function ManagerUsers() {
   const fetchUsers = useCallback(async (page) => {
     try {
       setLoading(true);
-      const response = await userService.getUsers({ page, limit: 10 });
+      const response = await managerService.getUsers({ page, limit: 10 });
       setUsers(response.users || []);
       setCurrentPage(response.currentPage || 1);
       setTotalPages(response.totalPages || 1);

@@ -17,6 +17,7 @@ const logAdminAction = async (req, action, activity, details = "", targetId = ""
     await AdminLog.create({
       admin: req.user.id,
       adminEmail: adminUser ? adminUser.email : (req.user.email || "admin"),
+      actorRole: "admin",
       action,
       activity,
       details,

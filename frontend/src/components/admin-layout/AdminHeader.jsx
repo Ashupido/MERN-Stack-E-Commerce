@@ -10,15 +10,16 @@ export default function AdminHeader({ toggleMobileSidebar, isMobileSidebarOpen }
   const { user, logout } = useAuth();
 
   return (
-    <header className="flex items-center justify-between h-16 bg-gray-800 px-4 shadow-md">
+    <header className="flex min-h-16 items-center justify-between gap-3 border-b border-gray-700 bg-gray-900 px-3 py-3 shadow-md sm:px-5 lg:px-6">
       {/* Mobile sidebar toggle */}
       <button
-        className="lg:hidden text-gray-300 hover:text-white"
+        type="button"
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-gray-300 transition hover:bg-gray-700 hover:text-white lg:hidden"
         onClick={toggleMobileSidebar}
         aria-label={isMobileSidebarOpen ? 'Close navigation' : 'Open navigation'}
       >
         <svg
-          className={`${isMobileSidebarOpen ? 'hidden' : 'block'} h-6 w-6`}
+          className={`${isMobileSidebarOpen ? 'hidden' : 'block'} h-5 w-5`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -26,34 +27,34 @@ export default function AdminHeader({ toggleMobileSidebar, isMobileSidebarOpen }
         >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
         </svg>
-        <XMarkIcon className={`${isMobileSidebarOpen ? 'block' : 'hidden'} h-6 w-6`} />
+        <XMarkIcon className={`${isMobileSidebarOpen ? 'block' : 'hidden'} h-5 w-5`} />
       </button>
 
       {/* Logo and title */}
-      <div className="flex items-center space-x-3">
-        <Link to="/admin/dashboard" className="text-2xl font-black text-amber-300">
+      <div className="min-w-0 flex-1">
+        <Link to="/admin/dashboard" className="text-xl font-black tracking-tight text-amber-300 sm:text-2xl">
           Pido
         </Link>
-        <span className="text-sm font-medium text-gray-300">Admin Control Center</span>
+        <span className="ml-2 hidden text-sm font-medium text-gray-300 sm:inline">Admin Control Center</span>
       </div>
 
       {/* Right side icons */}
-      <div className="flex items-center space-x-4">
+      <div className="flex shrink-0 items-center gap-1 sm:gap-3">
         {/* Notification bell */}
-        <button className="relative text-gray-300 hover:text-white">
+        <button type="button" aria-label="Notifications" className="relative flex h-10 w-10 items-center justify-center rounded-lg text-gray-300 transition hover:bg-gray-800 hover:text-white">
           <BellIcon className="h-5 w-5" />
           {/* Example red dot for unread count */}
-          <span className="absolute -top-1 -right-1 block h-2 w-2 rounded-full bg-red-500" />
+          <span className="absolute right-2 top-2 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-gray-900" />
         </button>
         {/* Avatar and name */}
-        <div className="flex items-center space-x-2">
-          <img src={avatarUrl} alt="Admin avatar" className="h-8 w-8 rounded-full border border-gray-600" />
-          <span className="text-sm font-medium text-gray-200">{user?.name || 'Admin'}</span>
+        <div className="flex items-center gap-2">
+          <img src={avatarUrl} alt="Admin avatar" className="h-9 w-9 rounded-full border border-gray-600" />
+          <span className="hidden max-w-28 truncate text-sm font-medium text-gray-200 sm:inline">{user?.name || 'Admin'}</span>
         </div>
         {/* Logout */}
-        <button onClick={logout} className="flex items-center text-gray-300 hover:text-white">
+        <button type="button" onClick={logout} aria-label="Log out" className="flex h-10 items-center justify-center rounded-lg px-2 text-gray-300 transition hover:bg-gray-800 hover:text-white sm:gap-1">
           <LogoutIcon className="h-5 w-5" />
-          <span className="ml-1 text-sm">Logout</span>
+          <span className="hidden text-sm sm:inline">Logout</span>
         </button>
       </div>
     </header>

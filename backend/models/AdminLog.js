@@ -10,6 +10,12 @@ const adminLogSchema = new mongoose.Schema(
     adminEmail: {
       type: String,
     },
+    actorRole: {
+      type: String,
+      enum: ["admin", "manager", "seller", "unknown"],
+      default: "unknown",
+      index: true,
+    },
     action: {
       type: String,
       required: true,

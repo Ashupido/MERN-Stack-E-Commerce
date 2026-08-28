@@ -7,6 +7,7 @@ const Order = require("../models/Order");
 const verifyToken = require("../middleware/authMiddleware");
 const isSeller = require("../middleware/isSeller");
 const upload = require("../middleware/uploadMiddleware");
+const logActivity = require("../utils/activityLogger");
 
 // Configure Cloudinary
 cloudinary.config({
@@ -125,6 +126,8 @@ router.post(
 
       await product.save();
 
+      await logActivity(req, "Created Product", `Created product ${product.name}`, `Product ID: ${product._id}`, product._id);
+
       res.status(201).json(product);
     } catch (err) {
       console.error("CREATE PRODUCT ERROR:", err);
@@ -178,6 +181,8 @@ router.put("/products/:id", verifyToken, isSeller, upload.single("image"), async
       runValidators: true,
     });
 
+    await logActivity(req, "Updated Product", `Updated product ${updatedProduct.name}`, `Product ID: ${updatedProduct._id}`, updatedProduct._id);
+
     res.json({ message: "Product updated successfully", product: updatedProduct });
   } catch (err) {
     console.error("UPDATE PRODUCT ERROR (SELLER):", err);
@@ -203,6 +208,7 @@ router.delete("/products/:id", verifyToken, isSeller, async (req, res) => {
     }
 
     await Product.findByIdAndDelete(req.params.id);
+    await logActivity(req, "Deleted Product", `Deleted product ${product.name}`, `Product ID: ${product._id}`, product._id);
     res.json({ message: "Product deleted successfully" });
   } catch (err) {
     console.error("DELETE PRODUCT ERROR (SELLER):", err);
@@ -296,6 +302,8 @@ router.put("/settings", verifyToken, isSeller, async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
+
+    await logActivity(req, "Updated Seller Settings", "Updated seller account settings", `User ID: ${user._id}`, user._id);
 
     res.json({ message: "Settings updated successfully", user });
   } catch (err) {
