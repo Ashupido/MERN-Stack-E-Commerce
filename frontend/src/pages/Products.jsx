@@ -347,6 +347,11 @@ export default function Products({ addToast }) {
   const heroProduct = featuredProducts[0] || fallbackProducts[0];
   const deals = location.pathname === '/products' ? featuredProducts : featuredProducts.slice(0, 5);
   const topSelling = featuredProducts.slice(0, 4);
+  const additionalProducts = featuredProducts.slice(5, 8).length > 0
+    ? featuredProducts.slice(5)
+    : featuredProducts.slice(0, 3);
+  const recommendedProducts = additionalProducts.filter((_, index) => index % 2 === 0);
+  const exploreProducts = additionalProducts.filter((_, index) => index % 2 !== 0);
 
   return (
     <div className="min-h-screen bg-[#f5f7fb] text-slate-950">
@@ -557,6 +562,14 @@ export default function Products({ addToast }) {
                   ))}
                 </div>
               )}
+              {location.pathname === '/' && (
+                <Link
+                  to="/products"
+                  className="mt-5 flex w-full items-center justify-center rounded-md bg-green-800 px-4 py-3 text-sm font-black text-white transition hover:bg-green-700"
+                >
+                  View More Products
+                </Link>
+              )}
             </div>
           )}
 
@@ -564,7 +577,7 @@ export default function Products({ addToast }) {
             <div className="rounded-lg bg-white p-5 shadow-sm">
               <div className="mb-4 flex items-center justify-between gap-3">
                 <h2 className="text-lg font-black">Top Selling</h2>
-                <button className="text-sm font-bold text-blue-700">View all</button>
+                <Link to="/products" className="text-sm font-bold text-blue-700">View all</Link>
               </div>
               <div className="grid gap-4">
                 {topSelling.map((product, index) => (
@@ -601,7 +614,7 @@ export default function Products({ addToast }) {
           )}
         </section>
 
-        <section id="deals" className="order-4 mt-4 hidden gap-4 rounded-lg bg-white p-5 shadow-sm lg:grid lg:order-none xl:grid-cols-[280px_1fr_360px]">
+        <section id="deals" className="order-4 mt-4 hidden gap-4 rounded-lg bg-white p-5 shadow-sm lg:grid lg:order-none lg:items-start xl:grid-cols-[280px_1fr_360px]">
           <aside className="rounded-lg bg-white p-6 shadow-sm">
             <h2 className="text-lg font-black">Shop by Category</h2>
             <div className="mt-4 grid gap-3">
@@ -623,9 +636,30 @@ export default function Products({ addToast }) {
                 </button>
               ))}
             </div>
-            <button className="mt-5 w-full rounded-md border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-black">
+            <Link to="/products" className="mt-5 block w-full rounded-md border border-slate-200 bg-slate-50 px-4 py-3 text-center text-sm font-black">
               View All Categories
-            </button>
+            </Link>
+            <div className="mt-6 border-t border-slate-100 pt-5">
+              <div className="mb-4 flex items-center justify-between gap-2">
+                <h3 className="text-base font-black">Recommended Products</h3>
+                <Link to="/products" className="text-xs font-bold text-blue-700">View all</Link>
+              </div>
+              <div className="grid gap-4">
+                {recommendedProducts.map((product, index) => (
+                  <article key={`recommended-${product._id || product.name}`} className="grid grid-cols-[56px_1fr] items-center gap-3">
+                    <button type="button" onClick={() => goToProduct(product)} className="h-14 w-14 overflow-hidden rounded-md bg-slate-50" aria-label={`View ${product.name}`}>
+                      <ProductImage product={product} index={index + 2} />
+                    </button>
+                    <div className="min-w-0">
+                      <button type="button" onClick={() => goToProduct(product)} className="block w-full truncate text-left text-sm font-bold text-slate-700">
+                        {product.name}
+                      </button>
+                      <p className="mt-1 font-black">{formatPrice(product.price)}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
           </aside>
 
           <section className="rounded-lg bg-white p-6 shadow-sm">
@@ -634,7 +668,7 @@ export default function Products({ addToast }) {
                 <h2 className="text-xl font-black">Today's Deals</h2>
                 <span className="rounded-md bg-red-500 px-4 py-2 text-xs font-black text-white">Up to 60% off</span>
               </div>
-              <button className="text-sm font-bold text-blue-700">View all deals</button>
+              <Link to="/products" className="text-sm font-bold text-blue-700">View all deals</Link>
             </div>
 
             <div className="mb-5">
@@ -691,7 +725,7 @@ export default function Products({ addToast }) {
           <aside className="rounded-lg bg-white p-6 shadow-sm">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-black">Top Selling</h2>
-              <button className="text-sm font-bold text-blue-700">View all</button>
+              <Link to="/products" className="text-sm font-bold text-blue-700">View all</Link>
             </div>
             <div className="grid gap-4">
               {topSelling.map((product, index) => (
@@ -733,6 +767,27 @@ export default function Products({ addToast }) {
                   </div>
                 </article>
               ))}
+            </div>
+            <div className="mt-6 border-t border-slate-100 pt-5">
+              <div className="mb-4 flex items-center justify-between gap-2">
+                <h3 className="text-base font-black">More To Explore</h3>
+                <Link to="/products" className="text-xs font-bold text-blue-700">View all</Link>
+              </div>
+              <div className="grid gap-4">
+                {(exploreProducts.length > 0 ? exploreProducts : recommendedProducts).map((product, index) => (
+                  <article key={`explore-${product._id || product.name}`} className="grid grid-cols-[56px_1fr] items-center gap-3">
+                    <button type="button" onClick={() => goToProduct(product)} className="h-14 w-14 overflow-hidden rounded-md bg-slate-50" aria-label={`View ${product.name}`}>
+                      <ProductImage product={product} index={index + 4} />
+                    </button>
+                    <div className="min-w-0">
+                      <button type="button" onClick={() => goToProduct(product)} className="block w-full truncate text-left text-sm font-bold text-slate-700">
+                        {product.name}
+                      </button>
+                      <p className="mt-1 font-black">{formatPrice(product.price)}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
             </div>
           </aside>
         </section>

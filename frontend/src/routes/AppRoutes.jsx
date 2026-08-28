@@ -39,6 +39,7 @@ import AdminSettings from '../pages/admin/AdminSettings';
 import AdminReports from '../pages/admin/reports'; // Corrected to lowercase 'r'
 import SellerDashboard from '../pages/SellerDashboard';
 import SellerProducts from '../pages/seller/Products';
+import AddProduct from '../pages/seller/AddProduct';
 import SellerOrders from '../pages/seller/Orders';
 import SellerSettings from '../pages/seller/Settings';
 
@@ -111,6 +112,7 @@ export default function AppRoutes({ addToast }) {
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<SellerDashboard addToast={addToast} />} />
           <Route path="products" element={<SellerProducts />} />
+          <Route path="add-product" element={<AddProduct />} />
           <Route path="orders" element={<SellerOrders />} />
           <Route path="settings" element={<SellerSettings />} />
         </Route>
